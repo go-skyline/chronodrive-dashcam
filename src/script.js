@@ -4,7 +4,7 @@
         headerTitle: "TDashcam Studio",
         toggleSidebar: "Toggle Sidebar",
         toggleTheme: "Toggle Theme",
-        toggleLanguage: "切换到中文",
+        toggleLanguage: "切換至中文",
         drivingRecords: "Driving Records",
         date: "Date",
         eventType: "Event Type",
@@ -108,116 +108,116 @@
         exportMetadataSuccess: "Metadata exported successfully",
         exportMetadataNoData: "No metadata available to export"
     },
-    zh: {
+    'zh-TW': {
         pageTitle: "TDashcam Studio",
         headerTitle: "TDashcam Studio",
-        toggleSidebar: "切换侧边栏",
-        toggleTheme: "切换主题",
+        toggleSidebar: "切換側邊欄",
+        toggleTheme: "切換主題",
         toggleLanguage: "Switch to English",
-        drivingRecords: "行车记录",
+        drivingRecords: "行車記錄",
         date: "日期",
-        eventType: "事件类型",
-        allTypes: "🎥 所有类型",
+        eventType: "事件類型",
+        allTypes: "🎥 所有類型",
         recentClips: "🕒 最近片段",
-        savedClips: "💾 保存片段",
+        savedClips: "💾 已儲存片段",
         sentryClips: "🤖 哨兵模式",
-        noRecordsFound: "没有找到匹配的记录",
-        selectFolder: "📁 选择文件夹",
-        selectFiles: "📁 选择文件",
-        helpStep1: "插入特斯拉U盘到你的PC",
-        helpStep2: "选择或拖拽U盘中的TeslaCam目录",
-        helpStep1IOS: "将TeslaCam视频复制到iPad/iPhone",
-        helpStep2IOS: "选择视频文件（如 2024-01-15_12-30-00-front.mp4）",
-        helpNote: "注意：本工具不会上传你的数据，一切操作都是本地行为。（由于高德对WGS-84支持不够，所以高德地图有误差）",
-        desktopTip: "💡 提示：由于浏览器有诸多限制，建议使用桌面版获得更好的性能体验。",
-        desktopDownload: "下载桌面版",
-        mapModalTitle: "在地图上查看",
-        gaodeMap: "高德地图",
-        googleMap: "谷歌地图",
-        revealFile: "显示路径",
-        downloadFile: "下载视频",
-        filePathAlertTitle: "当前视频文件路径",
-        copiedToClipboard: "已复制到剪贴板",
-        noFilePath: "无法获取当前摄像头的文件路径",
-        selectDate: "选择日期",
-        minutes: "分钟",
-        preview: "预览图",
-        noSignal: "无信号",
-        grid6: "6宫格",
-        grid4: "4宫格",
-        legacy: "画中画",
+        noRecordsFound: "找不到符合的記錄",
+        selectFolder: "📁 選擇資料夾",
+        selectFiles: "📁 選擇檔案",
+        helpStep1: "將 Tesla USB 隨身碟插入電腦",
+        helpStep2: "選擇或拖曳隨身碟中的 TeslaCam 目錄",
+        helpStep1IOS: "將 TeslaCam 影片複製到 iPad/iPhone",
+        helpStep2IOS: "選擇影片檔案（如 2024-01-15_12-30-00-front.mp4）",
+        helpNote: "注意：本工具不會上傳您的資料，所有操作皆在本機執行。（由於高德地圖對 WGS-84 支援不完整，定位可能有誤差）",
+        desktopTip: "💡 提示：由於瀏覽器有諸多限制，建議使用桌面版以獲得更好的效能體驗。",
+        desktopDownload: "下載桌面版",
+        mapModalTitle: "在地圖上檢視",
+        gaodeMap: "高德地圖",
+        googleMap: "Google 地圖",
+        revealFile: "顯示路徑",
+        downloadFile: "下載影片",
+        filePathAlertTitle: "目前影片檔案路徑",
+        copiedToClipboard: "已複製到剪貼簿",
+        noFilePath: "無法取得目前攝影機的檔案路徑",
+        selectDate: "選擇日期",
+        minutes: "分鐘",
+        preview: "預覽圖",
+        noSignal: "無訊號",
+        grid6: "6 宮格",
+        grid4: "4 宮格",
+        legacy: "子母畫面",
         front: "前",
-        back: "后",
+        back: "後",
         left: "左",
         right: "右",
         leftPillar: "左柱",
         rightPillar: "右柱",
         play: "播放",
-        pause: "暂停",
-        toggleDay: "切换到日间模式",
-        toggleNight: "切换到夜间模式",
-        invalidFolder: "这似乎不是一个有效的TeslaCam目录。请确保您选择了包含RecentClips, SavedClips等子文件夹的TeslaCam目录。",
-        clipVideo: "剪辑视频",
-        confirmClip: "确认剪辑范围",
-        exportClip: "导出视频片段",
-        clipDuration: "选中时长:",
-        clipStartTime: "起始时间:",
-        clipEndTime: "结束时间:",
-        selectCameras: "选择摄像头:",
-        addTimestamp: "添加时间水印",
-        addMetadata: "添加行驶数据",
-        mergeVideos: "合成四宫格视频",
-        startExport: "开始导出",
+        pause: "暫停",
+        toggleDay: "切換至日間模式",
+        toggleNight: "切換至夜間模式",
+        invalidFolder: "這似乎不是有效的 TeslaCam 目錄。請確認您選擇的是包含 RecentClips、SavedClips 等子資料夾的 TeslaCam 目錄。",
+        clipVideo: "剪輯影片",
+        confirmClip: "確認剪輯範圍",
+        exportClip: "匯出影片片段",
+        clipDuration: "選取時長:",
+        clipStartTime: "起始時間:",
+        clipEndTime: "結束時間:",
+        selectCameras: "選擇攝影機:",
+        addTimestamp: "加入時間浮水印",
+        addMetadata: "加入行車數據",
+        mergeVideos: "合成四宮格影片",
+        startExport: "開始匯出",
         cancel: "取消",
-        preparing: "准备中...",
-        processing: "处理中...",
-        exporting: "导出中...",
-        complete: "完成!",
-        selectClipRange: "请先在进度条上选择剪辑范围",
-        selectAtLeastOneCamera: "请至少选择一个摄像头",
-        exportFailed: "导出失败: ",
-        metadata: "行车数据",
-        driveStats: "行车数据",
-        loadingMetadata: "加载中...",
-        noMetadata: "无元数据",
+        preparing: "準備中...",
+        processing: "處理中...",
+        exporting: "匯出中...",
+        complete: "完成！",
+        selectClipRange: "請先在進度條上選擇剪輯範圍",
+        selectAtLeastOneCamera: "請至少選擇一個攝影機",
+        exportFailed: "匯出失敗：",
+        metadata: "行車數據",
+        driveStats: "行車數據",
+        loadingMetadata: "載入中...",
+        noMetadata: "無中繼資料",
         speed: "速度",
-        gear: "档位",
-        steering: "方向盘角度",
-        accelerator: "油门踏板",
-        brake: "刹车",
+        gear: "檔位",
+        steering: "方向盤角度",
+        accelerator: "油門踏板",
+        brake: "煞車",
         brakeApplied: "踩下",
         brakeNotApplied: "未踩",
-        blinker: "转向灯",
-        autopilot: "自动驾驶",
-        gps: "GPS 坐标",
+        blinker: "方向燈",
+        autopilot: "自動駕駛",
+        gps: "GPS 座標",
         heading: "航向",
         acceleration: "加速度",
-        gearPark: "驻车 (P)",
-        gearDrive: "前进 (D)",
-        gearReverse: "倒车 (R)",
-        gearNeutral: "空档 (N)",
+        gearPark: "駐車 (P)",
+        gearDrive: "前進 (D)",
+        gearReverse: "倒車 (R)",
+        gearNeutral: "空檔 (N)",
         blinkerLeft: "左",
         blinkerRight: "右",
-        blinkerBoth: "双闪",
-        blinkerOff: "关",
-        autopilotNone: "无",
-        autopilotSelfDriving: "完全自动驾驶 (FSD)",
-        autopilotAutosteer: "自动辅助转向",
-        autopilotTACC: "自适应巡航",
-        moreOptions: "更多选项",
-        metadataDetail: "详细数据",
-        vehicleStatus: "车辆状态",
-        drivingAssist: "驾驶辅助",
-        locationInfo: "位置信息",
-        motionData: "运动数据",
-        latitude: "纬度",
-        longitude: "经度",
+        blinkerBoth: "雙閃",
+        blinkerOff: "關",
+        autopilotNone: "無",
+        autopilotSelfDriving: "全自動輔助駕駛 (FSD)",
+        autopilotAutosteer: "自動輔助轉向",
+        autopilotTACC: "主動式定速巡航",
+        moreOptions: "更多選項",
+        metadataDetail: "詳細數據",
+        vehicleStatus: "車輛狀態",
+        drivingAssist: "駕駛輔助",
+        locationInfo: "位置資訊",
+        motionData: "運動數據",
+        latitude: "緯度",
+        longitude: "經度",
         accelX: "加速度 X",
         accelY: "加速度 Y",
         accelZ: "加速度 Z",
-        exportMetadata: "导出CSV",
-        exportMetadataSuccess: "元数据导出成功",
-        exportMetadataNoData: "没有可导出的元数据"
+        exportMetadata: "匯出 CSV",
+        exportMetadataSuccess: "中繼資料匯出成功",
+        exportMetadataNoData: "沒有可匯出的中繼資料"
     }
 };
 
@@ -974,7 +974,7 @@ class MetadataOverlayGenerator {
      * Generate all unique overlay PNGs needed for the video and save them
      * Returns a map of stateKey -> pngPath, or null if too many unique states
      */
-    async generateOverlayPngs(allMetadata, clipSegments, workDir, width = 1920, height = 1080, progressCallback = null, language = 'zh') {
+    async generateOverlayPngs(allMetadata, clipSegments, workDir, width = 1920, height = 1080, progressCallback = null, language = 'zh-TW') {
         const tauri = window.__TAURI__;
         const fs = tauri.fs;
         
@@ -1003,7 +1003,7 @@ class MetadataOverlayGenerator {
             return null;
         }
         
-        progressCallback?.(language === 'zh' ? `生成 ${uniqueStates.size} 个元数据覆盖层...` : `Generating ${uniqueStates.size} metadata overlays...`);
+        progressCallback?.(language === 'zh-TW' ? `生成 ${uniqueStates.size} 個中繼資料覆蓋層...` : `Generating ${uniqueStates.size} metadata overlays...`);
         
         // Create directory for PNGs
         await fs.mkdir(pngDir, { recursive: true });
@@ -1028,7 +1028,7 @@ class MetadataOverlayGenerator {
                 idx++;
                 
                 if (idx % 20 === 0) {
-                    progressCallback?.(language === 'zh' ? `生成覆盖层 ${idx}/${uniqueStates.size}...` : `Generating overlay ${idx}/${uniqueStates.size}...`);
+                    progressCallback?.(language === 'zh-TW' ? `生成覆蓋層 ${idx}/${uniqueStates.size}...` : `Generating overlay ${idx}/${uniqueStates.size}...`);
                     // Short sleep to yield main thread
                     await new Promise(r => setTimeout(r, 0));
                 }
@@ -1337,10 +1337,10 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     /**
      * Format metadata to display text with colors (no ASS drawing, reliable text only)
      * @param {Object} data - Metadata object
-     * @param {string} lang - Language code ('en' or 'zh')
+     * @param {string} lang - Language code ('en' or 'zh-TW')
      * @returns {string} Formatted display text with ASS color commands
      */
-    formatMetadataText(data, lang = 'zh') {
+    formatMetadataText(data, lang = 'zh-TW') {
         if (!data) return '';
         
         const parts = [];
@@ -1417,7 +1417,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
      * @param {number} height - Video height
      * @returns {string} Complete ASS file content
      */
-    generateAssContent(allMetadata, clipSegments, lang = 'zh', width = 1920, height = 1080) {
+    generateAssContent(allMetadata, clipSegments, lang = 'zh-TW', width = 1920, height = 1080) {
         let content = this.generateHeader(width, height);
         const dialogues = [];
         
@@ -1481,7 +1481,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
      * @param {string} lang - Language
      * @returns {string} ASS content
      */
-    generateForSingleCamera(allMetadata, clipSegments, lang = 'zh') {
+    generateForSingleCamera(allMetadata, clipSegments, lang = 'zh-TW') {
         return this.generateAssContent(allMetadata, clipSegments, lang, 1920, 1080);
     }
     
@@ -1493,7 +1493,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
      * @param {string} lang - Language
      * @returns {string} ASS content
      */
-    generateForGrid(allMetadata, clipSegments, cameraCount, lang = 'zh') {
+    generateForGrid(allMetadata, clipSegments, cameraCount, lang = 'zh-TW') {
         // Calculate grid dimensions
         let width, height;
         if (cameraCount <= 2) {
@@ -2025,32 +2025,32 @@ class MetadataManager {
         
         // Brake
         s.brake.textContent = d.brakeApplied 
-            ? (lang === 'zh' ? '踩下' : 'Applied') 
-            : (lang === 'zh' ? '未踩' : 'Released');
+            ? (lang === 'zh-TW' ? '踩下' : 'Applied') 
+            : (lang === 'zh-TW' ? '未踩' : 'Released');
         s.brake.className = 'stats-value' + (d.brakeApplied ? ' highlight-red' : '');
         
         // Blinker
         const blinkerLeft = d.blinkerOnLeft || false;
         const blinkerRight = d.blinkerOnRight || false;
         if (blinkerLeft && blinkerRight) {
-            s.blinker.textContent = lang === 'zh' ? '双闪' : 'Hazard';
+            s.blinker.textContent = lang === 'zh-TW' ? '雙閃' : 'Hazard';
             s.blinker.className = 'stats-value highlight-yellow';
         } else if (blinkerLeft) {
-            s.blinker.textContent = lang === 'zh' ? '← 左转' : '← Left';
+            s.blinker.textContent = lang === 'zh-TW' ? '← 左轉' : '← Left';
             s.blinker.className = 'stats-value highlight-green';
         } else if (blinkerRight) {
-            s.blinker.textContent = lang === 'zh' ? '右转 →' : 'Right →';
+            s.blinker.textContent = lang === 'zh-TW' ? '右轉 →' : 'Right →';
             s.blinker.className = 'stats-value highlight-green';
         } else {
-            s.blinker.textContent = lang === 'zh' ? '关' : 'Off';
+            s.blinker.textContent = lang === 'zh-TW' ? '關' : 'Off';
             s.blinker.className = 'stats-value';
         }
         
         // Autopilot
         const apMap = {
-            'NONE': lang === 'zh' ? '无' : 'None',
+            'NONE': lang === 'zh-TW' ? '無' : 'None',
             'SELF_DRIVING': 'FSD',
-            'AUTOSTEER': lang === 'zh' ? '自动转向' : 'Autosteer',
+            'AUTOSTEER': lang === 'zh-TW' ? '自動轉向' : 'Autosteer',
             'TACC': 'TACC'
         };
         s.autopilot.textContent = apMap[d.autopilotState] || d.autopilotState || '--';
@@ -2393,7 +2393,7 @@ class MultiCameraPlayer {
                      }
                      // Set localized text (Simple check for window.viewer global or fallback)
                      // Note: We access window.viewer carefully
-                     const lang = (window.viewer && window.viewer.currentLanguage) || 'zh';
+                     const lang = (window.viewer && window.viewer.currentLanguage) || 'zh-TW';
                      const cameraNames = {
                         front: { en: 'Front', zh: '前视' },
                         left_pillar: { en: 'Left Pillar', zh: '左柱' },
@@ -2979,7 +2979,7 @@ class ModernVideoControls {
             this.clipSelection.classList.add('active');
             this.clipStartHandle.classList.add('active');
             this.clipEndHandle.classList.add('active');
-            this.clipBtn.style.color = '#007bff';
+            this.clipBtn.style.color = '#f0c040';
             
             // Show confirm button, hide clip button
             if (this.confirmClipBtn) {
@@ -3190,7 +3190,7 @@ class ModernVideoControls {
                 newTime.setSeconds(newTime.getSeconds() + totalElapsedTime);
             }
 
-            const locale = this.viewer.currentLanguage === 'zh' ? 'zh-CN' : 'en-CA';
+            const locale = this.viewer.currentLanguage === 'zh-TW' ? 'zh-TW' : 'en-CA';
             this.realTimeClock.textContent = newTime.toLocaleString(locale, {
                 year: 'numeric',
                 month: '2-digit',
@@ -4167,11 +4167,11 @@ class VideoClipProcessor {
     // Fix WebM metadata using FFmpeg WASM (for streamed files)
     async fixWebmWithFFmpeg(fileHandle, progressCallback) {
         try {
-            progressCallback?.(this.currentLanguage === 'zh' ? '加载 FFmpeg 修复模块...' : 'Loading FFmpeg repair module...');
+            progressCallback?.(this.currentLanguage === 'zh-TW' ? '載入 FFmpeg 修復模組...' : 'Loading FFmpeg repair module...');
             const ffmpeg = await this.loadFFmpeg(progressCallback);
             
             // Read the file content
-            progressCallback?.(this.currentLanguage === 'zh' ? '读取视频文件...' : 'Reading video file...');
+            progressCallback?.(this.currentLanguage === 'zh-TW' ? '讀取影片檔案...' : 'Reading video file...');
             const file = await fileHandle.getFile();
             const inputData = new Uint8Array(await file.arrayBuffer());
             
@@ -4179,7 +4179,7 @@ class VideoClipProcessor {
             await ffmpeg.writeFile('input.webm', inputData);
             
             // Run FFmpeg to remux (copy streams, fix metadata)
-            progressCallback?.(this.currentLanguage === 'zh' ? '修复视频元数据...' : 'Repairing video metadata...');
+            progressCallback?.(this.currentLanguage === 'zh-TW' ? '修復影片中繼資料...' : 'Repairing video metadata...');
             await ffmpeg.exec([
                 '-i', 'input.webm',
                 '-c', 'copy',
@@ -4199,7 +4199,7 @@ class VideoClipProcessor {
             }
             
             // Write back to the original file
-            progressCallback?.(this.currentLanguage === 'zh' ? '保存修复后的视频...' : 'Saving repaired video...');
+            progressCallback?.(this.currentLanguage === 'zh-TW' ? '儲存修復後的影片...' : 'Saving repaired video...');
             const writable = await fileHandle.createWritable();
             await writable.write(outputData);
             await writable.close();
@@ -4573,7 +4573,7 @@ class VideoClipProcessor {
      */
     async executeFFmpegWithProgress(args, totalDuration, progressCallback, progressPrefix) {
         if (!progressPrefix) {
-            progressPrefix = this.currentLanguage === 'zh' ? '编码中...' : 'Encoding...';
+            progressPrefix = this.currentLanguage === 'zh-TW' ? '編碼中...' : 'Encoding...';
         }
         const tauri = window.__TAURI__;
         const command = this.createFFmpegCommand(args);
@@ -4743,13 +4743,13 @@ class VideoClipProcessor {
             ];
             
             console.log('Running ffmpeg:', args);
-            progressCallback?.(this.currentLanguage === 'zh' ? `FFmpeg 极速导出中...` : `FFmpeg Fast Exporting...`);
+            progressCallback?.(this.currentLanguage === 'zh-TW' ? `FFmpeg 極速匯出中...` : `FFmpeg Fast Exporting...`);
             
             const totalDuration = clipSegments.reduce((sum, seg) => {
                 const dur = (seg.clipEnd || 60) - (seg.clipStart || 0);
                 return sum + (dur > 0 ? dur : 0);
             }, 0);
-            const output = await this.executeFFmpegWithProgress(args, totalDuration, progressCallback, this.currentLanguage === 'zh' ? '极速导出...' : 'Fast Exporting...');
+            const output = await this.executeFFmpegWithProgress(args, totalDuration, progressCallback, this.currentLanguage === 'zh-TW' ? '極速匯出...' : 'Fast Exporting...');
             
             // Read result
             const binary = await fs.readFile(outputPath);
@@ -4772,7 +4772,7 @@ class VideoClipProcessor {
 
 
 
-    async processClip(segments, cameras, startTime, endTime, addTimestamp, addMetadata, mergeGrid, eventStartTime, progressCallback, useLocalFFmpeg = false, language = 'zh', fileHandle = null, metadataManager = null) {
+    async processClip(segments, cameras, startTime, endTime, addTimestamp, addMetadata, mergeGrid, eventStartTime, progressCallback, useLocalFFmpeg = false, language = 'zh-TW', fileHandle = null, metadataManager = null) {
         try {
             // Reset cancellation state
             this.isCancelled = false;
@@ -4797,15 +4797,15 @@ class VideoClipProcessor {
                 
                 if (mergeGrid && cameras.length > 1) {
                     // FFmpeg grid merge with optional timestamp and metadata
-                    progressCallback?.(this.currentLanguage === 'zh' ? 'FFmpeg 合成四宫格视频...' : 'FFmpeg Merging Grid Video...');
+                    progressCallback?.(this.currentLanguage === 'zh-TW' ? 'FFmpeg 合成四宮格影片...' : 'FFmpeg Merging Grid Video...');
                     const result = await this.processWithFFmpegGrid(clipSegments, cameras, addTimestamp, addMetadata, eventStartTime, progressCallback);
                     return [result];
                 } else {
                     // FFmpeg single camera export
                     const results = [];
                     for (const camera of cameras) {
-                        if (this.isCancelled) throw new Error(this.currentLanguage === 'zh' ? '导出已取消' : 'Export Cancelled');
-                        progressCallback?.(this.currentLanguage === 'zh' ? `FFmpeg 极速导出 ${camera}...` : `FFmpeg Fast Exporting ${camera}...`);
+                        if (this.isCancelled) throw new Error(this.currentLanguage === 'zh-TW' ? '匯出已取消' : 'Export Cancelled');
+                        progressCallback?.(this.currentLanguage === 'zh-TW' ? `FFmpeg 極速匯出 ${camera}...` : `FFmpeg Fast Exporting ${camera}...`);
                         const result = await this.processWithFFmpegFull(clipSegments, camera, addTimestamp, addMetadata, eventStartTime, progressCallback);
                         results.push(result);
                     }
@@ -5000,7 +5000,7 @@ class VideoClipProcessor {
                     const videoWidth = 1280;
                     const videoHeight = 960;
                     
-                    progressCallback?.(`生成元数据图标覆盖层...`);
+                    progressCallback?.(`生成中繼資料覆蓋層...`);
                     try {
                         overlayInfo = await metadataOverlayGenerator.generateOverlayPngs(
                             allMetadata,
@@ -5143,11 +5143,11 @@ class VideoClipProcessor {
             }
             
             console.log('[FFmpeg] Running:', args.join(' '));
-            progressCallback?.(this.currentLanguage === 'zh' ? `FFmpeg 处理 ${camera}...` : `FFmpeg Processing ${camera}...`);
+            progressCallback?.(this.currentLanguage === 'zh-TW' ? `FFmpeg 處理 ${camera}...` : `FFmpeg Processing ${camera}...`);
             
             // totalDuration already calculated at line 4166
-            const output = await this.executeFFmpegWithProgress(args, totalDuration, progressCallback, this.currentLanguage === 'zh' ? `处理 ${camera}...` : `Processing ${camera}...`);
-            progressCallback?.(this.currentLanguage === 'zh' ? `处理 ${camera}: 100%` : `Processing ${camera}: 100%`);
+            const output = await this.executeFFmpegWithProgress(args, totalDuration, progressCallback, this.currentLanguage === 'zh-TW' ? `處理 ${camera}...` : `Processing ${camera}...`);
+            progressCallback?.(this.currentLanguage === 'zh-TW' ? `處理 ${camera}: 100%` : `Processing ${camera}: 100%`);
             
             console.log('[FFmpeg] Finished processing camera:', camera);
             
@@ -5319,7 +5319,7 @@ class VideoClipProcessor {
                 allMetadata = await this.loadMetadataForSegments(clipSegments, metadataCamera, progressCallback);
                 
                 if (allMetadata && allMetadata.length > 0) {
-                    progressCallback?.(this.currentLanguage === 'zh' ? `生成元数据图标覆盖层...` : `Generating metadata overlays...`);
+                    progressCallback?.(this.currentLanguage === 'zh-TW' ? `生成中繼資料覆蓋層...` : `Generating metadata overlays...`);
                     try {
                         overlayInfo = await metadataOverlayGenerator.generateOverlayPngs(
                             allMetadata,
@@ -5353,7 +5353,7 @@ class VideoClipProcessor {
             let filterComplex = '';
             
             // Camera names for localization
-            const lang = this.currentLanguage || 'zh';
+            const lang = this.currentLanguage || 'zh-TW';
             const cameraNames = {
                 front: { en: 'Front', zh: '前视' },
                 left_pillar: { en: 'Left Pillar', zh: '左柱' },
@@ -5517,10 +5517,10 @@ class VideoClipProcessor {
             console.log('[FFmpeg Grid] Filter script content (last 500):', filterComplex.substring(filterComplex.length - 500));
             console.log('[FFmpeg Grid] Running with', activeCameras.length, 'cameras, duration:', totalDuration);
             console.log('[FFmpeg Grid] Args:', args.join(' '));
-            progressCallback?.(this.currentLanguage === 'zh' ? 'FFmpeg 合成四宫格...' : 'FFmpeg Merging Grid...');
+            progressCallback?.(this.currentLanguage === 'zh-TW' ? 'FFmpeg 合成四宮格...' : 'FFmpeg Merging Grid...');
             
-            const output = await this.executeFFmpegWithProgress(args, totalDuration, progressCallback, this.currentLanguage === 'zh' ? '合成四宫格...' : 'Merging Grid...');
-            progressCallback?.(this.currentLanguage === 'zh' ? '合成四宫格: 100%' : 'Merging Grid: 100%');
+            const output = await this.executeFFmpegWithProgress(args, totalDuration, progressCallback, this.currentLanguage === 'zh-TW' ? '合成四宮格...' : 'Merging Grid...');
+            progressCallback?.(this.currentLanguage === 'zh-TW' ? '合成四宮格: 100%' : 'Merging Grid: 100%');
             
             console.log('[FFmpeg Grid] Finished processing grid');
             
@@ -5595,12 +5595,12 @@ class VideoClipProcessor {
             throw new Error('没有可用的视频片段');
         }
         
-        progressCallback?.(this.currentLanguage === 'zh' ? `处理 ${camera} 摄像头 (${clipSegments.length} 个片段)...` : `Processing ${camera} camera (${clipSegments.length} segments)...`);
+        progressCallback?.(this.currentLanguage === 'zh-TW' ? `處理 ${camera} 攝影機 (${clipSegments.length} 個片段)...` : `Processing ${camera} camera (${clipSegments.length} segments)...`);
         
         // Load metadata for all segments if addMetadata is enabled
         let allMetadata = [];
         if (addMetadata && this.metadataManager) {
-            progressCallback?.(this.currentLanguage === 'zh' ? '加载行驶数据...' : 'Loading driving data...');
+            progressCallback?.(this.currentLanguage === 'zh-TW' ? '載入行車數據...' : 'Loading driving data...');
             allMetadata = await this.loadMetadataForSegments(clipSegments, camera, progressCallback);
             // Load SVG icons for metadata overlay
             await this.loadMetadataIcons();
@@ -6010,19 +6010,19 @@ class VideoClipProcessor {
             return result;
         }
 
-        progressCallback?.('修复视频元数据...');
+        progressCallback?.('修復影片中繼資料...');
         const fixedBlob = await webmDurationFixer.fixDuration(result, calculatedDuration);
         
         return fixedBlob;
     }
     
     async createGridVideoFromSegments(clipSegments, cameras, totalStartTime, totalEndTime, addTimestamp, addMetadata, eventStartTime, progressCallback, fileHandle = null) {
-        progressCallback?.(this.currentLanguage === 'zh' ? `准备四宫格视频 (${clipSegments.length} 个片段)...` : `Preparing grid video (${clipSegments.length} segments)...`);
+        progressCallback?.(this.currentLanguage === 'zh-TW' ? `準備四宮格影片 (${clipSegments.length} 個片段)...` : `Preparing grid video (${clipSegments.length} segments)...`);
         
         // Load metadata for all segments if addMetadata is enabled
         let allMetadata = [];
         if (addMetadata && this.metadataManager) {
-            progressCallback?.(this.currentLanguage === 'zh' ? '加载行驶数据...' : 'Loading driving data...');
+            progressCallback?.(this.currentLanguage === 'zh-TW' ? '載入行車數據...' : 'Loading driving data...');
             // Use front camera for metadata (it's the same for all cameras)
             allMetadata = await this.loadMetadataForSegments(clipSegments, cameras[0], progressCallback);
             // Load SVG icons for metadata overlay
@@ -6396,7 +6396,7 @@ class VideoClipProcessor {
                         const labelY = item.y + 4;
                         this.ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
                         this.ctx.font = 'bold 12px "Noto Sans SC", Arial';
-                        const lang = this.currentLanguage || 'zh';
+                        const lang = this.currentLanguage || 'zh-TW';
                         const cameraNames = {
                             front: { en: 'Front', zh: '前视' },
                             left_pillar: { en: 'Left Pillar', zh: '左柱' },
@@ -6443,7 +6443,7 @@ class VideoClipProcessor {
                 this.ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
                 this.ctx.font = 'bold 12px "Noto Sans SC", Arial';
                 
-                const lang = this.currentLanguage || 'zh';
+                const lang = this.currentLanguage || 'zh-TW';
                 const cameraNames = {
                     front: { en: 'Front', zh: '前视' },
                     left_pillar: { en: 'Left Pillar', zh: '左柱' },
@@ -6751,7 +6751,7 @@ class VideoClipProcessor {
             return result;
         }
 
-        progressCallback?.('修复视频元数据...');
+        progressCallback?.('修復影片中繼資料...');
         const fixedBlob = await webmDurationFixer.fixDuration(result, calculatedDuration);
         
         return fixedBlob;
@@ -6789,7 +6789,7 @@ class VideoClipProcessor {
         const allMetadata = [];
         
         for (let i = 0; i < clipSegments.length; i++) {
-            if (this.isCancelled) throw new Error('导出已取消');
+            if (this.isCancelled) throw new Error('匯出已取消');
             if (progressCallback) {
                 progressCallback(`读取视频数据 ${i + 1}/${clipSegments.length}...`);
             }
@@ -6869,7 +6869,7 @@ class VideoClipProcessor {
     /**
      * Draw metadata overlay on canvas
      */
-    drawMetadata(metadataData, lang = 'zh') {
+    drawMetadata(metadataData, lang = 'zh-TW') {
         if (!metadataData) return;
         
         const d = metadataData;
@@ -7171,7 +7171,7 @@ class TeslaCamViewer {
         this.allFiles = [];
         this.eventGroups = [];
         this.currentEvent = null;
-        this.currentLanguage = 'zh';
+        this.currentLanguage = 'zh-TW';
         this.currentMapCoordinates = null;
         this.flatpickrInstance = null;
         this.videoClipProcessor = new VideoClipProcessor();
@@ -7478,7 +7478,7 @@ class TeslaCamViewer {
         const translations = i18n[lang];
         this.flatpickrInstance = flatpickr(this.dom.dateFilter, {
             dateFormat: "Y-m-d",
-            locale: this.currentLanguage === 'zh' ? 'zh' : 'default',
+            locale: this.currentLanguage === 'zh-TW' ? 'zh' : 'default',
             placeholder: translations.selectDate,
             disableMobile: true, // Force flatpickr on mobile instead of native picker
             onChange: (selectedDates, dateStr, instance) => {
@@ -7825,7 +7825,7 @@ class TeslaCamViewer {
         
         if (validFiles.length === 0) {
             const lang = this.currentLanguage;
-            alert(lang === 'zh' 
+            alert(lang === 'zh-TW' 
                 ? '未找到有效的TeslaCam视频文件。请选择文件名格式为 "2024-01-15_12-30-00-front.mp4" 的视频文件。'
                 : 'No valid TeslaCam video files found. Please select video files with filename format like "2024-01-15_12-30-00-front.mp4".');
             this.dom.fileInputIOS.value = '';
@@ -8431,17 +8431,17 @@ class TeslaCamViewer {
     }
 
     toggleLanguage() {
-        const newLang = this.currentLanguage === 'zh' ? 'en' : 'zh';
+        const newLang = this.currentLanguage === 'zh-TW' ? 'en' : 'zh-TW';
         this.setLanguage(newLang);
     }
 
     setLanguage(lang) {
         this.currentLanguage = lang;
         localStorage.setItem('language', lang);
-        document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+        document.documentElement.lang = lang === 'zh-TW' ? 'zh-TW' : 'en';
         // Guard clause for flatpickr instance and its methods
         if (this.flatpickrInstance && typeof this.flatpickrInstance.set === 'function') {
-            const isChinese = lang === 'zh';
+            const isChinese = lang === 'zh-TW';
             this.flatpickrInstance.set('locale', isChinese ? 'zh' : 'default');
             this.flatpickrInstance.redraw();
         }
@@ -8453,8 +8453,9 @@ class TeslaCamViewer {
     }
 
     loadLanguage() {
-        const savedLang = localStorage.getItem('language');
-        let lang = navigator.language.startsWith('zh') ? 'zh' : 'en';
+        let savedLang = localStorage.getItem('language');
+        if (savedLang === 'zh') savedLang = 'zh-TW';
+        let lang = navigator.language.startsWith('zh') ? 'zh-TW' : 'en';
         if (savedLang) {
             lang = savedLang;
         }
@@ -8634,7 +8635,7 @@ class TeslaCamViewer {
         const loadingDiv = document.createElement('div');
         loadingDiv.id = 'fsa-loading';
         loadingDiv.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.8);color:white;padding:20px 40px;border-radius:8px;z-index:9999;';
-        loadingDiv.textContent = this.currentLanguage === 'zh' ? '正在加载目录...' : 'Loading directory...';
+        loadingDiv.textContent = this.currentLanguage === 'zh-TW' ? '正在載入目錄...' : 'Loading directory...';
         document.body.appendChild(loadingDiv);
         
         try {
@@ -8816,9 +8817,9 @@ class TeslaCamViewer {
         // Update language toggle button text
         const langIconEl = this.dom.langToggleBtn.querySelector('.btn-icon');
         if (langIconEl) {
-            langIconEl.textContent = lang === 'zh' ? 'En' : '中';
+            langIconEl.textContent = lang === 'zh-TW' ? 'En' : '中';
         } else {
-            this.dom.langToggleBtn.textContent = lang === 'zh' ? 'En' : '中';
+            this.dom.langToggleBtn.textContent = lang === 'zh-TW' ? 'En' : '中';
         }
         
         this.dom.langToggleBtn.title = translations.toggleLanguage;
@@ -9211,7 +9212,7 @@ class TeslaCamViewer {
             const startTime = new Date(startDate.getTime() + this.videoControls.clipStartTime * 1000);
             const endTime = new Date(startDate.getTime() + this.videoControls.clipEndTime * 1000);
             
-            const locale = this.currentLanguage === 'zh' ? 'zh-CN' : 'en-CA';
+            const locale = this.currentLanguage === 'zh-TW' ? 'zh-TW' : 'en-CA';
             this.dom.clipStartTime.textContent = startTime.toLocaleString(locale, {
                 year: 'numeric',
                 month: '2-digit',
@@ -9249,12 +9250,12 @@ class TeslaCamViewer {
                     this.dom.useLocalFFmpeg.checked = true;
                     this.dom.useLocalFFmpeg.disabled = false;
                     document.getElementById('useLocalFFmpegLabel').textContent = 
-                        this.currentLanguage === 'zh' ? '使用 FFmpeg 极速导出' : 'Use FFmpeg Fast Export';
+                        this.currentLanguage === 'zh-TW' ? '使用 FFmpeg 極速匯出' : 'Use FFmpeg Fast Export';
                 } else {
                     this.dom.useLocalFFmpeg.checked = false;
                     this.dom.useLocalFFmpeg.disabled = true;
                     document.getElementById('useLocalFFmpegLabel').textContent = 
-                        this.currentLanguage === 'zh' ? 'FFmpeg 未安装' : 'FFmpeg Not Installed';
+                        this.currentLanguage === 'zh-TW' ? 'FFmpeg 未安裝' : 'FFmpeg Not Installed';
                 }
             });
         } else if (this.dom.ffmpegOptionRow) {

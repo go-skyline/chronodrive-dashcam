@@ -5,14 +5,14 @@
     --bg-tertiary: #f8f9fa;
     --bg-player: #000000;
     --bg-input: #f8f9fa;
-    --bg-button: #007bff;
-    --bg-button-hover: #0056b3;
+    --bg-button: #1a2f5a;
+    --bg-button-hover: #152548;
     --bg-header: #ffffff;
     --bg-header-button-hover: rgba(0, 0, 0, 0.05);
     --bg-overlay-gradient: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
     --bg-speed-options: rgba(40, 40, 40, 0.9);
     --bg-speed-options-hover: rgba(255, 255, 255, 0.1);
-    --bg-speed-options-active: rgba(0, 123, 255, 0.8);
+    --bg-speed-options-active: rgba(240, 192, 64, 0.8);
 
     --text-primary: #1c1e21;
     --text-secondary: #6c757d;
@@ -22,14 +22,14 @@
 
     --border-primary: #ddd;
     --border-secondary: #ccc;
-    --border-focus: #007bff;
+    --border-focus: #1a2f5a;
     --border-header: #dddddd;
     --border-pip: rgba(255, 255, 255, 0.1);
-    --border-pip-hover: #007bff;
+    --border-pip-hover: #1a2f5a;
 
     --shadow-primary: rgba(0,0,0,0.12);
     --shadow-secondary: rgba(0,0,0,0.24);
-    --shadow-focus: rgba(0, 122, 255, 0.2);
+    --shadow-focus: rgba(26, 47, 90, 0.2);
     
     --icon-color: #1c1e21;
     --icon-filter-on-dark: brightness(0) invert(1);
@@ -42,8 +42,8 @@ body.dark-theme {
     --bg-tertiary: #3a3a3a;
     --bg-player: #000000;
     --bg-input: #3a3a3a;
-    --bg-button: #007aff;
-    --bg-button-hover: #0056b3;
+    --bg-button: #1a2f5a;
+    --bg-button-hover: #152548;
     --bg-header: #242526;
     --bg-header-button-hover: rgba(255, 255, 255, 0.1);
 
@@ -55,14 +55,14 @@ body.dark-theme {
 
     --border-primary: #393a3b;
     --border-secondary: #444444;
-    --border-focus: #007aff;
+    --border-focus: #1a2f5a;
     --border-header: #393a3b;
     --border-pip: rgba(255, 255, 255, 0.1);
-    --border-pip-hover: #007aff;
+    --border-pip-hover: #f0c040;
 
     --shadow-primary: rgba(0,0,0,0.2);
     --shadow-secondary: rgba(0,0,0,0.3);
-    --shadow-focus: rgba(0, 122, 255, 0.3);
+    --shadow-focus: rgba(26, 47, 90, 0.3);
     
     --icon-color: #e4e6eb;
     --icon-filter-on-dark: brightness(0) invert(0.9);
@@ -295,7 +295,7 @@ body {
 }
 
 .metadata-switch-btn.active {
-    color: #007aff;
+    color: #1a2f5a;
     background-color: rgba(0, 122, 255, 0.1);
 }
 
@@ -380,7 +380,7 @@ body {
 
 .sidebar.drag-over {
     background-color: rgba(102, 126, 234, 0.1);
-    box-shadow: inset 0 0 20px rgba(102, 126, 234, 0.3);
+    box-shadow: inset 0 0 20px rgba(26, 47, 90, 0.3);
 }
 
 .sidebar.collapsed {
@@ -392,8 +392,8 @@ body {
     display: flex;
     align-items: center;
     padding: 1rem;
-    border-bottom: 1px solid rgba(102, 126, 234, 0.2);
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    border-bottom: 1px solid rgba(26, 47, 90, 0.25);
+    background: rgba(26, 47, 90, 0.1);
     transition: background-color 0.3s, border-color 0.3s;
     gap: 10px;
 }
@@ -404,10 +404,7 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #f0c040;
     font-weight: 600;
 }
 
@@ -601,9 +598,9 @@ body.dark-theme #eventFilter {
     color: var(--text-secondary);
     margin-top: 15px;
     padding: 12px 15px;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    background: rgba(26, 47, 90, 0.1);
     border-radius: 8px;
-    border-left: 3px solid #667eea;
+    border-left: 3px solid #1a2f5a;
     width: 100%;
     box-sizing: border-box;
 }
@@ -612,7 +609,7 @@ body.dark-theme #eventFilter {
     display: inline-block;
     margin-top: 8px;
     padding: 6px 12px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1a2f5a;
     color: white;
     text-decoration: none;
     border-radius: 6px;
@@ -623,7 +620,7 @@ body.dark-theme #eventFilter {
 
 .help-text .desktop-link:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 12px rgba(26, 47, 90, 0.4);
 }
 
 .video-card {
@@ -742,19 +739,19 @@ body.dark-theme #eventFilter {
     padding: 0.75rem;
     font-size: 1rem;
     font-weight: 600;
-    color: #ffffff;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #1a2f5a;
+    background: #f0c040;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     text-align: center;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 15px rgba(240, 192, 64, 0.3);
 }
 
 #selectFolderBtn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 6px 20px rgba(240, 192, 64, 0.4);
 }
 
 /* Player Area */
@@ -935,7 +932,7 @@ body.dark-theme #eventFilter {
     top: 0;
     left: 0;
     height: 100%;
-    background-color: var(--text-on-dark);
+    background-color: #f0c040;
     border-radius: 2px;
     width: 0;
     z-index: 1;
@@ -946,9 +943,9 @@ body.dark-theme #eventFilter {
     top: 0;
     left: 0;
     height: 100%;
-    background-color: rgba(0, 123, 255, 0.3);
-    border-left: 2px solid #007bff;
-    border-right: 2px solid #007bff;
+    background-color: rgba(240, 192, 64, 0.3);
+    border-left: 2px solid #f0c040;
+    border-right: 2px solid #f0c040;
     pointer-events: none;
     display: none;
     z-index: 2;
@@ -961,7 +958,7 @@ body.dark-theme #eventFilter {
 .clip-handle {
     width: 16px;
     height: 24px;
-    background-color: #007bff;
+    background-color: #f0c040;
     position: absolute;
     top: 50%;
     transform: translate(-50%, -50%);
@@ -988,7 +985,7 @@ body.dark-theme #eventFilter {
 }
 
 .clip-handle:hover {
-    background-color: #0056b3;
+    background-color: #d4a830;
 }
 
 .clip-btn {
@@ -1371,7 +1368,7 @@ body.dark-theme #eventFilter {
 
     .video-time .city-link {
         display: inline; /* 允许与图标同行 */
-        color: #007bff;
+        color: #1a2f5a;
         font-weight: bold;
     }
 
@@ -1498,7 +1495,7 @@ body.sidebar-collapsed .open-sidebar-btn {
 }
 
 .map-btn.gaode {
-    background-color: #007aff; /* 高德地图蓝 */
+    background-color: #1a2f5a; /* 高德地图蓝 */
 }
 
 .map-btn.google {
@@ -1539,8 +1536,8 @@ body.sidebar-collapsed .open-sidebar-btn {
     color: #fff;
     cursor: pointer;
     transition: all 0.2s ease;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    background: #1a2f5a;
+    box-shadow: 0 2px 8px rgba(26, 47, 90, 0.3);
     position: relative;
     overflow: hidden;
 }
@@ -1558,7 +1555,7 @@ body.sidebar-collapsed .open-sidebar-btn {
 
 .download-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 12px rgba(26, 47, 90, 0.4);
 }
 
 .download-btn:hover::before {
@@ -1567,7 +1564,7 @@ body.sidebar-collapsed .open-sidebar-btn {
 
 .download-btn:active {
     transform: translateY(0);
-    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 2px 6px rgba(26, 47, 90, 0.3);
 }
 
 .download-btn .btn-icon {
@@ -1590,7 +1587,7 @@ body.sidebar-collapsed .open-sidebar-btn {
 
 /* Grid video button variant - slightly different shade */
 .download-btn.grid-btn {
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    background: #1a2f5a;
     box-shadow: 0 2px 8px rgba(118, 75, 162, 0.3);
 }
 
@@ -1611,7 +1608,7 @@ body.sidebar-collapsed .open-sidebar-btn {
 .clip-modal h4 {
     font-size: 1.25rem;
     margin-bottom: 16px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1a2f5a;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -1648,12 +1645,12 @@ body.sidebar-collapsed .open-sidebar-btn {
 
 .clip-info-label::before {
     content: '•';
-    color: #667eea;
+    color: #1a2f5a;
     font-size: 1rem;
 }
 
 #clipDuration {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1a2f5a;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -1694,7 +1691,7 @@ body.sidebar-collapsed .open-sidebar-btn {
 }
 
 .clip-option-group:hover {
-    border-color: rgba(102, 126, 234, 0.3);
+    border-color: rgba(26, 47, 90, 0.3);
     background: rgba(102, 126, 234, 0.05);
 }
 
@@ -1753,7 +1750,7 @@ body.sidebar-collapsed .open-sidebar-btn {
 }
 
 .camera-checkboxes input[type="checkbox"]:checked {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1a2f5a;
     border-color: transparent;
 }
 
@@ -1789,7 +1786,7 @@ body.sidebar-collapsed .open-sidebar-btn {
 }
 
 .clip-option-group input[type="checkbox"]:checked {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1a2f5a;
     border-color: transparent;
 }
 
@@ -1828,7 +1825,7 @@ body.sidebar-collapsed .open-sidebar-btn {
 }
 
 .clip-checkbox-label:hover {
-    border-color: rgba(102, 126, 234, 0.3);
+    border-color: rgba(26, 47, 90, 0.3);
     background: rgba(102, 126, 234, 0.05);
 }
 
@@ -1853,7 +1850,7 @@ body.sidebar-collapsed .open-sidebar-btn {
 }
 
 .clip-checkbox-label input[type="checkbox"]:checked {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1a2f5a;
     border-color: transparent;
 }
 
@@ -1888,7 +1885,7 @@ body.sidebar-collapsed .open-sidebar-btn {
 
 .progress-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    background: #1a2f5a;
     width: 0;
     transition: width 0.3s ease;
     box-shadow: 0 0 8px rgba(102, 126, 234, 0.5);
@@ -1937,12 +1934,12 @@ body.sidebar-collapsed .open-sidebar-btn {
 }
 
 #startClipBtn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1a2f5a;
     border: none;
 }
 
 #startClipBtn:hover {
-    background: linear-gradient(135deg, #5568d3 0%, #6a3f91 100%);
+    background: #152548;
 }
 
 #startClipBtn:disabled {
@@ -1977,7 +1974,7 @@ body.sidebar-collapsed .open-sidebar-btn {
 }
 
 .clip-modal::-webkit-scrollbar-thumb {
-    background: rgba(102, 126, 234, 0.4);
+    background: rgba(26, 47, 90, 0.4);
     border-radius: 3px;
 }
 
@@ -2051,7 +2048,7 @@ body.sidebar-collapsed .open-sidebar-btn {
 
 .copy-path-btn {
     padding: 12px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1a2f5a;
     border: none;
     border-radius: 8px;
     color: white;
@@ -2064,7 +2061,7 @@ body.sidebar-collapsed .open-sidebar-btn {
 
 .copy-path-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 12px rgba(26, 47, 90, 0.4);
 }
 
 .copy-path-btn:active {
@@ -2411,8 +2408,8 @@ body.dark-theme .flatpickr-calendar .flatpickr-monthDropdown-months .flatpickr-m
 }
 
 .view-btn.active {
-    background: rgba(255, 255, 255, 0.2);
-    color: #fff;
+    background: rgba(240, 192, 64, 0.25);
+    color: #f0c040;
     font-weight: 700;
 }
 
@@ -3029,7 +3026,7 @@ body.dark-theme .flatpickr-calendar .flatpickr-monthDropdown-months .flatpickr-m
 }
 
 .toast.info {
-    border-left: 3px solid #667eea;
+    border-left: 3px solid #1a2f5a;
 }
 
 .toast.info::before {
@@ -3039,7 +3036,7 @@ body.dark-theme .flatpickr-calendar .flatpickr-monthDropdown-months .flatpickr-m
     justify-content: center;
     width: 20px;
     height: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1a2f5a;
     border-radius: 50%;
     font-size: 12px;
     font-weight: bold;
@@ -3058,7 +3055,7 @@ body:not(.dark-theme) .clip-modal {
 /* Clip Info Section - Light Mode */
 body:not(.dark-theme) .clip-info {
     background: rgba(102, 126, 234, 0.08);
-    border-color: rgba(102, 126, 234, 0.2);
+    border-color: rgba(26, 47, 90, 0.25);
 }
 
 /* Clip Option Group - Light Mode */
@@ -3069,7 +3066,7 @@ body:not(.dark-theme) .clip-option-group {
 
 body:not(.dark-theme) .clip-option-group:hover {
     background: rgba(102, 126, 234, 0.08);
-    border-color: rgba(102, 126, 234, 0.3);
+    border-color: rgba(26, 47, 90, 0.3);
 }
 
 /* Camera Checkboxes - Light Mode */
@@ -3080,7 +3077,7 @@ body:not(.dark-theme) .camera-checkboxes label {
 
 body:not(.dark-theme) .camera-checkboxes label:hover {
     background: rgba(102, 126, 234, 0.1);
-    border-color: rgba(102, 126, 234, 0.3);
+    border-color: rgba(26, 47, 90, 0.3);
 }
 
 body:not(.dark-theme) .camera-checkboxes input[type="checkbox"] {
@@ -3089,12 +3086,12 @@ body:not(.dark-theme) .camera-checkboxes input[type="checkbox"] {
 }
 
 body:not(.dark-theme) .camera-checkboxes input[type="checkbox"]:hover {
-    border-color: #667eea;
+    border-color: #1a2f5a;
     background: rgba(102, 126, 234, 0.1);
 }
 
 body:not(.dark-theme) .camera-checkboxes input[type="checkbox"]:checked {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1a2f5a;
     border-color: transparent;
 }
 
@@ -3107,7 +3104,7 @@ body:not(.dark-theme) .clip-checkbox-label {
 
 body:not(.dark-theme) .clip-checkbox-label:hover {
     background: rgba(102, 126, 234, 0.08);
-    border-color: rgba(102, 126, 234, 0.3);
+    border-color: rgba(26, 47, 90, 0.3);
 }
 
 body:not(.dark-theme) .clip-checkbox-label input[type="checkbox"] {
@@ -3116,12 +3113,12 @@ body:not(.dark-theme) .clip-checkbox-label input[type="checkbox"] {
 }
 
 body:not(.dark-theme) .clip-checkbox-label input[type="checkbox"]:hover {
-    border-color: #667eea;
+    border-color: #1a2f5a;
     background: rgba(102, 126, 234, 0.1);
 }
 
 body:not(.dark-theme) .clip-checkbox-label input[type="checkbox"]:checked {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1a2f5a;
     border-color: transparent;
 }
 
@@ -3132,12 +3129,12 @@ body:not(.dark-theme) .clip-option-group input[type="checkbox"] {
 }
 
 body:not(.dark-theme) .clip-option-group input[type="checkbox"]:hover {
-    border-color: #667eea;
+    border-color: #1a2f5a;
     background: rgba(102, 126, 234, 0.1);
 }
 
 body:not(.dark-theme) .clip-option-group input[type="checkbox"]:checked {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1a2f5a;
     border-color: transparent;
 }
 
