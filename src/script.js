@@ -54,6 +54,8 @@
         selectCameras: "Select Cameras:",
         addTimestamp: "Add Timestamp Watermark",
         addMetadata: "Add Driving Data Overlay",
+        addLogoWatermark: "Add Logo Watermark",
+        addBackgroundAudio: "Add Background Audio",
         mergeVideos: "Merge as Grid Video",
         startExport: "Start Export",
         cancel: "Cancel",
@@ -166,6 +168,8 @@
         selectCameras: "選擇攝影機:",
         addTimestamp: "加入時間浮水印",
         addMetadata: "加入行車數據",
+        addLogoWatermark: "加入 Logo 浮水印",
+        addBackgroundAudio: "加入背景音樂",
         mergeVideos: "合成四宮格影片",
         startExport: "開始匯出",
         cancel: "取消",
@@ -3202,7 +3206,7 @@ class ModernVideoControls {
             }).replace(/\//g, '-').replace(',', '');
 
         } catch (e) {
-            this.realTimeClock.textContent = '错误';
+            this.realTimeClock.textContent = '錯誤';
             console.error("Error updating real-time clock:", e);
         }
     }
@@ -4053,7 +4057,7 @@ class VideoClipProcessor {
         let FFmpegLib = window.FFmpegWASM || window.FFmpeg;
         
         if (!FFmpegLib) {
-            progressCallback?.('加载 FFmpeg 库...');
+            progressCallback?.('載入 FFmpeg 程式庫...');
             console.log('[FFmpeg] Dynamically loading FFmpeg WASM library...');
             
             try {
@@ -4104,10 +4108,10 @@ class VideoClipProcessor {
         const useMultiThread = supportsMultiThread; // Re-enabled with scale optimization
         
         if (useMultiThread) {
-            progressCallback?.('加载 FFmpeg 多线程核心模块...');
+            progressCallback?.('載入 FFmpeg 多執行緒核心模組...');
             console.log('[FFmpeg] Loading FFmpeg WASM core (multi-threaded)...');
         } else {
-            progressCallback?.('加载 FFmpeg 核心模块...');
+            progressCallback?.('載入 FFmpeg 核心模組...');
             console.log('[FFmpeg] Loading FFmpeg WASM core (single-threaded)...');
         }
         
@@ -4122,7 +4126,7 @@ class VideoClipProcessor {
         try {
             if (useMultiThread) {
                 // Multi-threaded version - faster but requires COOP/COEP headers
-                progressCallback?.('加载 FFmpeg 核心文件 (使用本地缓存)...');
+                progressCallback?.('載入 FFmpeg 核心檔案 (使用本機快取)...');
                 const [coreURL, wasmURL, workerURL] = await Promise.all([
                     this.toBlobURLWithCache(`${baseURLMT}/ffmpeg-core.js`, 'text/javascript', progressCallback),
                     this.toBlobURLWithCache(`${baseURLMT}/ffmpeg-core.wasm`, 'application/wasm', progressCallback),
@@ -4133,7 +4137,7 @@ class VideoClipProcessor {
                 this.ffmpegMultiThread = true;
             } else {
                 // Single-threaded version - more stable
-                progressCallback?.('加载 FFmpeg 核心文件 (使用本地缓存)...');
+                progressCallback?.('載入 FFmpeg 核心檔案 (使用本機快取)...');
                 const [coreURL, wasmURL] = await Promise.all([
                     this.toBlobURLWithCache(`${baseURL}/ffmpeg-core.js`, 'text/javascript', progressCallback),
                     this.toBlobURLWithCache(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm', progressCallback),
@@ -4146,7 +4150,7 @@ class VideoClipProcessor {
             // If multi-thread fails, fallback to single-thread
             if (useMultiThread) {
                 console.warn('[FFmpeg] Multi-thread load failed, falling back to single-thread:', mtError);
-                progressCallback?.('多线程加载失败，使用单线程模式...');
+                progressCallback?.('多執行緒載入失敗，使用單執行緒模式...');
                 const [coreURL, wasmURL] = await Promise.all([
                     this.toBlobURLWithCache(`${baseURL}/ffmpeg-core.js`, 'text/javascript', progressCallback),
                     this.toBlobURLWithCache(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm', progressCallback),
@@ -4228,7 +4232,7 @@ class VideoClipProcessor {
         throw new Error('Unsupported file type');
     }
 
-    async processWithFFmpegWasm(clipSegments, cameras, startTime, endTime, addTimestamp, mergeGrid, eventStartTime, progressCallback, fileHandle = null) {
+    async processWithFFmpegWasm(clipSegments, cameras, startTime, endTime, addTimestamp, mergeGrid, eventStartTime, progressCallback, fileHandle = null, addLogo = false, addAudio = false) {
         // Set the progress callback for FFmpeg events
         this.ffmpegProgressCallback = progressCallback;
         
@@ -4259,19 +4263,75 @@ class VideoClipProcessor {
                  });
             }
 
-            // Load Font if needed (once)
+            // Load Font if needed (once) — use bundled DejaVu Sans Bold
             let fontFile = null;
             if (addTimestamp) {
-                progressCallback?.('加载字体...');
+                progressCallback?.('載入字體...');
                 try {
-                     const fontUrl = 'https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxP.ttf';
-                     const fontData = await this.fetchFileAsUint8Array(fontUrl);
+                     let fontData;
+                     if (window.__TAURI__) {
+                         const resDir = await window.__TAURI__.path.resourceDir();
+                         const fSep = resDir.includes('\\') ? '\\' : '/';
+                         fontData = await window.__TAURI__.fs.readFile(`${resDir}assets${fSep}fonts${fSep}dejavu-sans-bold.ttf`);
+                     } else {
+                         fontData = await this.fetchFileAsUint8Array('assets/fonts/dejavu-sans-bold.ttf');
+                     }
                      await ffmpeg.writeFile('font.ttf', fontData);
                      fontFile = 'font.ttf';
                      allCreatedFiles.push('font.ttf');
                 } catch (e) {
                      console.warn('Font load failed, timestamp disabled', e);
                      addTimestamp = false;
+                }
+            }
+
+            // Load Logo if needed (once)
+            let logoFile = null;
+            if (addLogo) {
+                progressCallback?.('載入 Logo...');
+                try {
+                    let logoData;
+                    if (window.__TAURI__) {
+                        const resourceDir = await window.__TAURI__.path.resourceDir();
+                        const sep = resourceDir.includes('\\') ? '\\' : '/';
+                        logoData = await window.__TAURI__.fs.readFile(`${resourceDir}imgs${sep}TeslaCAM_256.png`);
+                    } else {
+                        logoData = await this.fetchFileAsUint8Array('imgs/TeslaCAM_256.png');
+                    }
+                    await ffmpeg.writeFile('logo.png', logoData);
+                    logoFile = 'logo.png';
+                    allCreatedFiles.push('logo.png');
+                } catch (e) {
+                    console.warn('Logo load failed, logo disabled', e);
+                    addLogo = false;
+                }
+            }
+
+            // Load background audio if needed (once)
+            let bgmFile = null;
+            if (addAudio) {
+                progressCallback?.('載入背景音樂...');
+                try {
+                    const audioFiles = [
+                        'M_Fischer.mp3', 'Take_Me_Down_To_The_Fashion_Show.mp3', 'Dopamina.mp3',
+                        'Do_The_Bop.mp3', 'La_Fiesta_Y_La_Cruda.mp3', 'Los_Cabos.mp3',
+                        'Chicago.mp3', 'Sugar_High.mp3', 'The_Monuments_and_Tunnels_in_Goa_and_Hampi.mp3'
+                    ];
+                    const selectedAudio = audioFiles[Math.floor(Math.random() * audioFiles.length)];
+                    let audioData;
+                    if (window.__TAURI__) {
+                        const resourceDir = await window.__TAURI__.path.resourceDir();
+                        const sep = resourceDir.includes('\\') ? '\\' : '/';
+                        audioData = await window.__TAURI__.fs.readFile(`${resourceDir}audios${sep}${selectedAudio}`);
+                    } else {
+                        audioData = await this.fetchFileAsUint8Array(`audios/${selectedAudio}`);
+                    }
+                    await ffmpeg.writeFile('bgm.mp3', audioData);
+                    bgmFile = 'bgm.mp3';
+                    allCreatedFiles.push('bgm.mp3');
+                } catch (e) {
+                    console.warn('BGM load failed, audio disabled', e);
+                    addAudio = false;
                 }
             }
 
@@ -4283,7 +4343,7 @@ class VideoClipProcessor {
                 const seg = clipSegments[i];
                 const segmentFiles = []; // Files for this segment only
                 
-                progressCallback?.(`处理片段 ${i + 1}/${clipSegments.length}...`);
+                progressCallback?.(`處理片段 ${i + 1}/${clipSegments.length}...`);
                 
                 const cameraInputs = {};
                 
@@ -4360,24 +4420,29 @@ class VideoClipProcessor {
                 let finalStream = '';
                 
                 if (mergeGrid && cameraStreamNames.length > 1) {
-                    // Grid logic
+                    // Grid logic with 6px gap
+                    const gap = 6;
                     const scaledStreams = [];
+                    const count = cameraStreamNames.length;
+                    // Calculate cell size based on grid layout
+                    const cols = count <= 4 ? 2 : 3;
+                    const cellW = count <= 4 ? Math.floor((1920 - gap) / 2) : Math.floor((2880 - 2 * gap) / 3);
+                    const cellH = Math.floor((1080 - gap) / 2);
                     for (const {name, cam} of cameraStreamNames) {
                         const scaledName = `[v_${cam}_scaled]`;
-                        filterComplex += `${name}scale=960:540${scaledName};`;
+                        filterComplex += `${name}scale=${cellW}:${cellH}${scaledName};`;
                         scaledStreams.push(scaledName);
                     }
-                    
-                    const count = scaledStreams.length;
+
                     let stackLayout = '';
-                    if (count === 4) stackLayout = '0_0|w0_0|0_h0|w0_h0';
-                    else if (count === 2) stackLayout = '0_0|w0_0';
-                    else if (count === 3) stackLayout = '0_0|w0_0|0_h0';
-                    else if (count === 6) stackLayout = '0_0|w0_0|w0+w1_0|0_h0|w0_h0|w0+w1_h0';
+                    if (count === 4) stackLayout = `0_0|w0+${gap}_0|0_h0+${gap}|w0+${gap}_h0+${gap}`;
+                    else if (count === 2) stackLayout = `0_0|w0+${gap}_0`;
+                    else if (count === 3) stackLayout = `0_0|w0+${gap}_0|0_h0+${gap}`;
+                    else if (count === 6) stackLayout = `0_0|w0+${gap}_0|w0+w1+${gap*2}_0|0_h0+${gap}|w0+${gap}_h0+${gap}|w0+w1+${gap*2}_h0+${gap}`;
                     else stackLayout = '0_0';
-                    
+
                     finalStream = `[v_grid]`;
-                    filterComplex += `${scaledStreams.join('')}xstack=inputs=${count}:layout=${stackLayout}${finalStream};`;
+                    filterComplex += `${scaledStreams.join('')}xstack=inputs=${count}:layout=${stackLayout}:fill=black${finalStream};`;
                 } else {
                     finalStream = cameraStreamNames[0].name;
                 }
@@ -4386,23 +4451,47 @@ class VideoClipProcessor {
                 if (addTimestamp && fontFile) {
                     const stampedStream = `[v_final]`;
                     const escapedTimestamp = segmentTimestampStr.replace(/:/g, '\\:');
-                    const drawText = `drawtext=fontfile=${fontFile}:text='${escapedTimestamp}':x=w-text_w-20:y=20:fontsize=48:fontcolor=white:box=1:boxcolor=black@0.5`;
-                    
+                    const drawText = `drawtext=fontfile=${fontFile}:text='${escapedTimestamp}':x=20:y=h-th-20:fontsize=42:fontcolor=white:borderw=3:bordercolor=black@0.8`;
+
                     filterComplex += `${finalStream}${drawText}${stampedStream}`;
                     finalStream = stampedStream;
                 }
-                
+
+                // Add logo overlay
+                let logoInputIdx = -1;
+                if (addLogo && logoFile) {
+                    // Logo input index = number of camera inputs
+                    logoInputIdx = inputIdx; // inputIdx tracks the next available index
+                    const logoStream = `[v_logo]`;
+                    filterComplex += (filterComplex.endsWith(';') ? '' : ';') + `[${logoInputIdx}:v]format=rgba,colorchannelmixer=aa=0.85[logo_alpha];${finalStream}[logo_alpha]overlay=x=W-w-16:y=16[logo_v]`;
+                    finalStream = `[logo_v]`;
+                }
+
                 if (filterComplex.endsWith(';')) filterComplex = filterComplex.slice(0, -1);
-                
+
                 const args = [];
                 // Add inputs
                 for (const cam of sortedCameras) {
                     if (cameraInputs[cam]) args.push('-i', cameraInputs[cam][0]);
                 }
-                
+                // Add logo input
+                if (addLogo && logoFile && logoInputIdx >= 0) {
+                    args.push('-i', logoFile);
+                }
+                // Add background audio input
+                if (addAudio && bgmFile) {
+                    args.push('-i', bgmFile);
+                }
+
                 args.push('-filter_complex', filterComplex);
                 args.push('-map', finalStream);
-                
+                // Audio mapping
+                if (addAudio && bgmFile) {
+                    const bgmIdx = inputIdx + (addLogo && logoFile ? 1 : 0);
+                    args.push('-map', `${bgmIdx}:a`);
+                    args.push('-c:a', 'aac', '-shortest');
+                }
+
                 // Encoding settings
                 // Use MPEG-TS for intermediate segments
                 args.push('-c:v', 'libx264', '-preset', 'ultrafast');
@@ -4423,7 +4512,7 @@ class VideoClipProcessor {
                 
                 if (writable) {
                      // Streaming write to disk directly
-                     progressCallback?.(`写入磁盘 (段 ${i + 1})...`);
+                     progressCallback?.(`寫入磁碟 (段 ${i + 1})...`);
                      await writable.write(segData);
                 } else {
                      // Convert to Blob immediately
@@ -4511,7 +4600,7 @@ class VideoClipProcessor {
             for (const f of allCreatedFiles) {
                 try { await ffmpeg.deleteFile(f); } catch {}
             }
-            throw new Error('浏览器导出失败: ' + e.message + "\\n建议使用 Chrome 浏览器或尝试本地应用模式。");
+            throw new Error('瀏覽器匯出失敗: ' + e.message + "\\n建议使用 Chrome 浏览器或尝试本地应用模式。");
         }
     }
 
@@ -4603,8 +4692,8 @@ class VideoClipProcessor {
                 if (code === 0) {
                     resolve({ code: 0, stderr });
                 } else {
-                    const lastError = stderr.split('\n').filter(l => l.includes('Error') || l.includes('error')).pop() || '未知错误';
-                    reject(new Error(`FFmpeg 错误 (code ${code}): ${lastError}`));
+                    const lastError = stderr.split('\n').filter(l => l.includes('Error') || l.includes('error')).pop() || '未知錯誤';
+                    reject(new Error(`FFmpeg 錯誤 (code ${code}): ${lastError}`));
                 }
             };
 
@@ -4772,7 +4861,7 @@ class VideoClipProcessor {
 
 
 
-    async processClip(segments, cameras, startTime, endTime, addTimestamp, addMetadata, mergeGrid, eventStartTime, progressCallback, useLocalFFmpeg = false, language = 'zh-TW', fileHandle = null, metadataManager = null) {
+    async processClip(segments, cameras, startTime, endTime, addTimestamp, addMetadata, mergeGrid, eventStartTime, progressCallback, useLocalFFmpeg = false, language = 'zh-TW', fileHandle = null, metadataManager = null, addLogo = false, addAudio = false) {
         try {
             // Reset cancellation state
             this.isCancelled = false;
@@ -4783,14 +4872,14 @@ class VideoClipProcessor {
             const clipSegments = this.getSegmentsForTimeRange(segments, startTime, endTime);
             
             if (clipSegments.length === 0) {
-                throw new Error('未找到有效的视频片段');
+                throw new Error('未找到有效的影片片段');
             }
 
             // 1. Use local FFmpeg if requested (Tauri desktop only)
             if (useLocalFFmpeg && window.__TAURI__) {
                 const hasFFmpeg = await this.checkFFmpeg();
                 if (!hasFFmpeg) {
-                    throw new Error('未检测到 FFmpeg，请先安装 FFmpeg 并确保其在系统 PATH 中');
+                    throw new Error('未偵測到 FFmpeg，請先安裝 FFmpeg 並確保其在系統 PATH 中');
                 }
                 
                 console.log('[VideoClipProcessor] Using local FFmpeg for export');
@@ -4798,7 +4887,7 @@ class VideoClipProcessor {
                 if (mergeGrid && cameras.length > 1) {
                     // FFmpeg grid merge with optional timestamp and metadata
                     progressCallback?.(this.currentLanguage === 'zh-TW' ? 'FFmpeg 合成四宮格影片...' : 'FFmpeg Merging Grid Video...');
-                    const result = await this.processWithFFmpegGrid(clipSegments, cameras, addTimestamp, addMetadata, eventStartTime, progressCallback);
+                    const result = await this.processWithFFmpegGrid(clipSegments, cameras, addTimestamp, addMetadata, eventStartTime, progressCallback, addLogo, addAudio);
                     return [result];
                 } else {
                     // FFmpeg single camera export
@@ -4806,19 +4895,19 @@ class VideoClipProcessor {
                     for (const camera of cameras) {
                         if (this.isCancelled) throw new Error(this.currentLanguage === 'zh-TW' ? '匯出已取消' : 'Export Cancelled');
                         progressCallback?.(this.currentLanguage === 'zh-TW' ? `FFmpeg 極速匯出 ${camera}...` : `FFmpeg Fast Exporting ${camera}...`);
-                        const result = await this.processWithFFmpegFull(clipSegments, camera, addTimestamp, addMetadata, eventStartTime, progressCallback);
+                        const result = await this.processWithFFmpegFull(clipSegments, camera, addTimestamp, addMetadata, eventStartTime, progressCallback, addLogo, addAudio);
                         results.push(result);
                     }
                     return results;
                 }
             }
 
-            // 2. Fallback: Try native FFmpeg for fast copy (no timestamp, no grid, no metadata) - Tauri only
+            // 2. Fallback: Try native FFmpeg for fast copy (no timestamp, no grid, no metadata, no logo, no audio) - Tauri only
             const hasFFmpeg = await this.checkFFmpeg();
-            if (hasFFmpeg && !addTimestamp && !addMetadata && !mergeGrid) {
+            if (hasFFmpeg && !addTimestamp && !addMetadata && !mergeGrid && !addLogo && !addAudio) {
                  const results = [];
                  for (const camera of cameras) {
-                     progressCallback?.(`极速导出 ${camera}...`);
+                     progressCallback?.(`極速匯出 ${camera}...`);
                      const blob = await this.processWithFFmpeg(clipSegments, camera, progressCallback);
                      results.push({ camera, blob });
                  }
@@ -4851,9 +4940,9 @@ class VideoClipProcessor {
             // For now, let's only enable it if fileHandle is present to test the fix.
             
             if (fileHandle) {
-                 progressCallback?.('正在使用流式导出模式 (Canvas)...');
-                 
-                 // 如果是合并四宫格
+                 progressCallback?.('正在使用流式匯出模式 (Canvas)...');
+
+                 // 如果是合并四宮格
                  if (mergeGrid && cameras.length > 1) {
                      const result = await this.createGridVideoFromSegments(
                         clipSegments,
@@ -4864,26 +4953,28 @@ class VideoClipProcessor {
                         addMetadata,
                         eventStartTime,
                         progressCallback,
-                        fileHandle
+                        fileHandle,
+                        addLogo,
+                        addAudio
                     );
-                    // result 可能是 Blob 或 { saved: true, blob: ... }
                     const blob = result.saved ? result.blob : result;
                     const saved = !!result.saved;
                     return [{ camera: 'grid', blob: blob, saved: saved }];
                  } else {
-                     // 单个摄像头处理
                      const results = [];
                      for (const camera of cameras) {
                          const result = await this.processVideoWithTimestamp(
-                            clipSegments, 
-                            camera, 
-                            startTime, 
-                            endTime, 
+                            clipSegments,
+                            camera,
+                            startTime,
+                            endTime,
                             addTimestamp,
                             addMetadata,
                             eventStartTime,
                             progressCallback,
-                            fileHandle
+                            fileHandle,
+                            addLogo,
+                            addAudio
                         );
                         const blob = result.saved ? result.blob : result;
                         const saved = !!result.saved;
@@ -4895,7 +4986,7 @@ class VideoClipProcessor {
 
             // 3. If merging as grid, process all cameras together (Canvas method)
             if (mergeGrid && cameras.length > 1) {
-                progressCallback?.('合成四宫格视频...');
+                progressCallback?.('合成四宮格影片...');
                 const gridBlob = await this.createGridVideoFromSegments(
                     clipSegments,
                     cameras,
@@ -4904,28 +4995,34 @@ class VideoClipProcessor {
                     addTimestamp,
                     addMetadata,
                     eventStartTime,
-                    progressCallback
+                    progressCallback,
+                    null,
+                    addLogo,
+                    addAudio
                 );
                 return [{ camera: 'grid', blob: gridBlob }];
             }
-            
+
             // 5. Otherwise, process each camera individually (Canvas method - fallback)
             const results = [];
-            
+
             for (const camera of cameras) {
-                progressCallback?.(`处理 ${camera} 摄像头...`);
-                
+                progressCallback?.(`處理 ${camera} 攝影機...`);
+
                 const videoBlob = await this.processVideoWithTimestamp(
-                    clipSegments, 
-                    camera, 
-                    startTime, 
-                    endTime, 
+                    clipSegments,
+                    camera,
+                    startTime,
+                    endTime,
                     addTimestamp,
                     addMetadata,
                     eventStartTime,
-                    progressCallback
+                    progressCallback,
+                    null,
+                    addLogo,
+                    addAudio
                 );
-                
+
                 results.push({ camera, blob: videoBlob });
             }
             
@@ -4941,13 +5038,13 @@ class VideoClipProcessor {
     }
     
     // FFmpeg full export with optional timestamp and metadata (single camera)
-    async processWithFFmpegFull(clipSegments, camera, addTimestamp, addMetadata, eventStartTime, progressCallback) {
+    async processWithFFmpegFull(clipSegments, camera, addTimestamp, addMetadata, eventStartTime, progressCallback, addLogo = false, addAudio = false) {
         const tauri = window.__TAURI__;
         const fs = tauri.fs;
         const shell = tauri.shell;
         
         const firstFile = clipSegments[0].segment.files[camera];
-        if (!firstFile || !firstFile.path) throw new Error(`${camera} 摄像头文件路径未找到`);
+        if (!firstFile || !firstFile.path) throw new Error(`${camera} 攝影機檔案路徑未找到`);
         
         const pathSeparator = firstFile.path.includes('\\') ? '\\' : '/';
         const lastSepIdx = firstFile.path.lastIndexOf(pathSeparator);
@@ -4992,7 +5089,7 @@ class VideoClipProcessor {
             let overlayInfo = null;
             
             if (addMetadata && this.metadataManager) {
-                progressCallback?.(`加载 ${camera} 元数据...`);
+                progressCallback?.(`載入 ${camera} 中繼資料...`);
                 allMetadata = await this.loadMetadataForSegments(clipSegments, camera, progressCallback);
                 
                 if (allMetadata && allMetadata.length > 0) {
@@ -5025,14 +5122,15 @@ class VideoClipProcessor {
             // Build filter chain
             let filterComplex = '';
             let inputArgs = ['-fflags', '+genpts', '-f', 'concat', '-safe', '0', '-i', listPath];
-            
+            let nextInputIdx = 1; // input 0 is the concat video
+
             console.log(`[FFmpeg] Exporting ${camera}, calculated duration: ${totalDuration}s`);
 
             let currentLabel = '[0:v]';
             
-            // Normalize video stream if we are re-encoding (timestamp or metadata enabled)
+            // Normalize video stream if we are re-encoding (timestamp, metadata, or logo enabled)
             // This is CRITICAL to fix duration shortening issues caused by PTS gaps in concat demuxer
-            if (addTimestamp || addMetadata) {
+            if (addTimestamp || addMetadata || addLogo) {
                 // Use fps filter to fill gaps, setpts to ensure continuous timeline from 0
                 // and trim to force the expected duration.
                 filterComplex = `${currentLabel}fps=fps=30,setpts=PTS-STARTPTS,trim=duration=${totalDuration}[v_sync]`;
@@ -5055,20 +5153,18 @@ class VideoClipProcessor {
                 const clipStartTimeObj = new Date(firstSegTime.getTime() + clipSegments[0].clipStart * 1000);
                 const startEpoch = Math.floor(clipStartTimeObj.getTime() / 1000);
                 
-                let fontOption = "";
-                if (navigator.userAgent.includes('Windows')) {
-                    fontOption = "fontfile='C\\:/Windows/Fonts/msyh.ttc':";
-                } else if (navigator.userAgent.includes('Mac')) {
-                    // Escape spaces for FFmpeg filter
-                    fontOption = "fontfile='/System/Library/Fonts/Hiragino\\ Sans\\ GB.ttc':";
-                }
+                // Use bundled DejaVu font
+                const resourceDir = await tauri.path.resourceDir();
+                const fontSep = resourceDir.includes('\\') ? '\\' : '/';
+                const fontPath = `${resourceDir}assets${fontSep}fonts${fontSep}dejavu-sans-bold.ttf`.replace(/\\/g, '/').replace(/'/g, "'\\''");
+                const fontOption = `fontfile='${fontPath}':`;
 
-                // FFmpeg pts:localtime only accepts 2 arguments (localtime and epoch timestamp)
-                const drawtext = `drawtext=${fontOption}text='%{pts\\:localtime\\:${startEpoch}}':x=w-text_w-20:y=20:fontsize=28:fontcolor=white:box=1:boxcolor=black@0.5`;
+                // White text with black border (no background box), larger font
+                const drawtext = `drawtext=${fontOption}text='%{pts\\:localtime\\:${startEpoch}}':x=20:y=h-th-20:fontsize=32:fontcolor=white:borderw=3:bordercolor=black@0.8`;
                 filterComplex += (filterComplex ? ';' : '') + `${currentLabel}${drawtext}[ts]`;
                 currentLabel = '[ts]';
             }
-            
+
             // Add PNG overlay filters for metadata
             if (addMetadata && overlayInfo && overlayInfo.pngPaths && overlayInfo.pngPaths.size > 0) {
                 const overlayResult = await metadataOverlayGenerator.generateOverlayFilter(
@@ -5084,29 +5180,68 @@ class VideoClipProcessor {
                     const bgPath = overlayInfo.pngPaths.get('__background__');
                     // Use -loop 1 for background image
                     inputArgs.push('-loop', '1', '-i', bgPath);
-                    const bgIdx = 1; // Video is 0, background is 1
+                    const bgIdx = nextInputIdx++;
 
                     inputArgs.push('-f', 'concat', '-safe', '0', '-i', overlayResult.concatFile);
-                    const metaIdx = 2; // Concat stream is 2
+                    const metaIdx = nextInputIdx++;
 
                     tempFiles.push(overlayResult.concatFile);
 
                     // Overlay background then metadata stream
                     const xExpr = '(W-w)/2';
                     const yExpr = '(H*0.97-h/2)';
-                    
+
                     // Background and metadata streams also need synchronization
                     const bgTrim = `[${bgIdx}:v]trim=duration=${totalDuration},setpts=PTS-STARTPTS[bg_trimmed]`;
                     const metaSync = `[${metaIdx}:v]setpts=PTS-STARTPTS[meta_sync]`;
-                    
+
                     // Apply overlays using synchronized streams
                     const ovPart = `${bgTrim};${metaSync};${currentLabel}[bg_trimmed]overlay=x=${xExpr}:y=${yExpr}:eof_action=pass[bg_v];[bg_v][meta_sync]overlay=x=${xExpr}:y=${yExpr}:eof_action=pass[ov]`;
-                    
+
                     filterComplex += (filterComplex ? ';' : '') + ovPart;
                     currentLabel = '[ov]';
                 }
             }
-            
+
+            // Add Logo watermark overlay
+            if (addLogo) {
+                const tauri = window.__TAURI__;
+                try {
+                    const resourceDir = await tauri.path.resourceDir();
+                    const sep = resourceDir.includes('\\') ? '\\' : '/';
+                    const logoPath = `${resourceDir}imgs${sep}TeslaCAM_256.png`;
+                    inputArgs.push('-i', logoPath);
+                    const logoIdx = nextInputIdx++;
+                    const logoPart = `[${logoIdx}:v]format=rgba,colorchannelmixer=aa=0.85[logo_alpha];${currentLabel}[logo_alpha]overlay=x=W-w-16:y=16:eof_action=pass[logo_out]`;
+                    filterComplex += (filterComplex ? ';' : '') + logoPart;
+                    currentLabel = '[logo_out]';
+                } catch (logoErr) {
+                    console.warn('[FFmpeg] Logo overlay failed:', logoErr);
+                }
+            }
+
+            // Add background audio input
+            let audioInputIdx = -1;
+            if (addAudio) {
+                try {
+                    const audioFiles = [
+                        'M_Fischer.mp3', 'Take_Me_Down_To_The_Fashion_Show.mp3', 'Dopamina.mp3',
+                        'Do_The_Bop.mp3', 'La_Fiesta_Y_La_Cruda.mp3', 'Los_Cabos.mp3',
+                        'Chicago.mp3', 'Sugar_High.mp3', 'The_Monuments_and_Tunnels_in_Goa_and_Hampi.mp3'
+                    ];
+                    const selectedAudio = audioFiles[Math.floor(Math.random() * audioFiles.length)];
+                    const resourceDir = await tauri.path.resourceDir();
+                    const sep = resourceDir.includes('\\') ? '\\' : '/';
+                    const audioPath = `${resourceDir}audios${sep}${selectedAudio}`;
+                    inputArgs.push('-i', audioPath);
+                    audioInputIdx = nextInputIdx++;
+                    console.log(`[FFmpeg] Background audio: ${selectedAudio} (input ${audioInputIdx})`);
+                } catch (audioErr) {
+                    console.warn('[FFmpeg] Background audio failed:', audioErr);
+                    audioInputIdx = -1;
+                }
+            }
+
             let args;
             if (filterComplex) {
                 // With filters: need re-encode
@@ -5121,11 +5256,12 @@ class VideoClipProcessor {
                     ...inputArgs,
                     '-filter_complex_script', filterScriptPath,
                     '-map', currentLabel,
-                    '-map', '0:a?',
+                    ...(audioInputIdx >= 0 ? ['-map', `${audioInputIdx}:a`] : ['-map', '0:a?']),
                     '-c:v', 'libx264',
                     '-preset', 'fast',
                     '-crf', '23',
                     '-c:a', 'aac',
+                    ...(audioInputIdx >= 0 ? ['-shortest'] : []),
                     '-t', String(Math.ceil(totalDuration + 0.5)),
                     '-y',
                     outputPath
@@ -5152,7 +5288,7 @@ class VideoClipProcessor {
             console.log('[FFmpeg] Finished processing camera:', camera);
             
             if (output.code !== 0) {
-                throw new Error(`FFmpeg 错误 (code ${output.code}): ${output.stderr || output.stdout || '未知错误'}`);
+                throw new Error(`FFmpeg 錯誤 (code ${output.code}): ${output.stderr || output.stdout || '未知錯誤'}`);
             }
             
             // Cleanup temp files
@@ -5204,7 +5340,7 @@ class VideoClipProcessor {
     }
     
     // FFmpeg grid merge export with optional timestamp and metadata
-    async processWithFFmpegGrid(clipSegments, cameras, addTimestamp, addMetadata, eventStartTime, progressCallback) {
+    async processWithFFmpegGrid(clipSegments, cameras, addTimestamp, addMetadata, eventStartTime, progressCallback, addLogo = false, addAudio = false) {
         const tauri = window.__TAURI__;
         const fs = tauri.fs;
         const shell = tauri.shell;
@@ -5233,10 +5369,10 @@ class VideoClipProcessor {
             clipSegments.some(seg => seg.segment.files[cam] && seg.segment.files[cam].path)
         );
         
-        if (activeCameras.length === 0) throw new Error('没有可导出的视频流');
+        if (activeCameras.length === 0) throw new Error('沒有可匯出的影片串流');
         
         const firstFile = clipSegments.find(seg => seg.segment.files[activeCameras[0]] && seg.segment.files[activeCameras[0]].path)?.segment.files[activeCameras[0]];
-        if (!firstFile) throw new Error('文件路径未找到');
+        if (!firstFile) throw new Error('檔案路徑未找到');
         
         const pathSeparator = firstFile.path.includes('\\') ? '\\' : '/';
         const lastSepIdx = firstFile.path.lastIndexOf(pathSeparator);
@@ -5284,7 +5420,7 @@ class VideoClipProcessor {
             
             // Update activeCameras to only include cameras with valid files
             if (validCameras.length === 0) {
-                throw new Error('没有可导出的视频文件');
+                throw new Error('沒有可匯出的影片檔案');
             }
             if (validCameras.length !== activeCameras.length) {
                 console.log(`[FFmpeg Grid] Reduced cameras from ${activeCameras.length} to ${validCameras.length}`);
@@ -5313,7 +5449,7 @@ class VideoClipProcessor {
             }
             
             if (addMetadata && this.metadataManager) {
-                progressCallback?.('加载元数据...');
+                progressCallback?.('載入中繼資料...');
                 // Use first camera for metadata (front camera preferred)
                 const metadataCamera = activeCameras.includes('front') ? 'front' : activeCameras[0];
                 allMetadata = await this.loadMetadataForSegments(clipSegments, metadataCamera, progressCallback);
@@ -5363,45 +5499,48 @@ class VideoClipProcessor {
                 right: { en: 'Right', zh: '右侧' }
             };
 
-            // Scale each input and add label
+            // Gap between grid cells (pixels)
+            const gap = 6;
+
+            // Resolve bundled font path once for all labels
+            const gridResourceDir = await tauri.path.resourceDir();
+            const gridFontSep = gridResourceDir.includes('\\') ? '\\' : '/';
+            const gridFontPath = `${gridResourceDir}assets${gridFontSep}fonts${gridFontSep}dejavu-sans-bold.ttf`.replace(/\\/g, '/').replace(/'/g, "'\\''");
+            const gridFontOption = `fontfile='${gridFontPath}':`;
+
+            // Scale each input and add label, with padding for grid gap
             for (let i = 0; i < count; i++) {
                 const camName = activeCameras[i];
                 const labelText = cameraNames[camName]?.[lang] || camName.toUpperCase();
-                
-                // Determine font file path based on OS for labels (use CJK-compatible font)
-                let fontOption = "";
-                if (navigator.userAgent.includes('Windows')) {
-                    fontOption = "fontfile='C\\:/Windows/Fonts/msyh.ttc':";
-                } else if (navigator.userAgent.includes('Mac')) {
-                    // Escape spaces for FFmpeg filter
-                    fontOption = "fontfile='/System/Library/Fonts/Hiragino\\ Sans\\ GB.ttc':";
-                }
 
-                const drawLabel = `drawtext=${fontOption}text='${labelText}':x=10:y=10:fontsize=18:fontcolor=white:box=1:boxcolor=black@0.5`;
-                // Add trim filter to ensure all streams have the same duration, preventing FFmpeg from hanging
-                filterComplex += `[${i}:v]trim=duration=${totalDuration},setpts=PTS-STARTPTS,scale=960:540,setsar=1,fps=24,format=yuv420p,${drawLabel}[v${i}];`;
+                const drawLabel = `drawtext=${gridFontOption}text='${labelText}':x=10:y=10:fontsize=18:fontcolor=white:box=1:boxcolor=black@0.5`;
+                // Scale to slightly smaller size, then pad with black for gap effect
+                // Each cell gets gap/2 padding on right and bottom; after stacking, adjacent cells share gap
+                const cellW = count <= 4 ? 960 - gap / 2 : 960 - gap / 2;
+                const cellH = 540 - gap / 2;
+                const padW = count <= 4 ? 960 : 960;
+                const padH = 540;
+                filterComplex += `[${i}:v]trim=duration=${totalDuration},setpts=PTS-STARTPTS,scale=${cellW}:${cellH},setsar=1,fps=24,format=yuv420p,${drawLabel},pad=${padW}:${padH}:0:0:black[v${i}];`;
             }
-            
+
             // Stack layout - no shortest=1 needed since trim filter ensures equal duration
+            // After stacking, crop to remove excess padding on outer edges
             let stackFilter = '';
             if (count === 1) {
                 stackFilter = `[v0]null[grid]`;
             } else if (count === 2) {
-                stackFilter = `[v0][v1]hstack=inputs=2[grid]`;
+                stackFilter = `[v0][v1]hstack=inputs=2,crop=${gridWidth}:${gridHeight}:0:0[grid]`;
             } else if (count === 3) {
-                // Top: 2 videos (1920px), Bottom: 1 video (960px) -> Pad bottom to 1920px (center aligned)
-                stackFilter = `[v0][v1]hstack=inputs=2[top];[v2]pad=1920:540:480:0[v2_padded];[top][v2_padded]vstack=inputs=2[grid]`;
+                stackFilter = `[v0][v1]hstack=inputs=2[top];[v2]pad=1920:540:480:0[v2_padded];[top][v2_padded]vstack=inputs=2,crop=${gridWidth}:${gridHeight}:0:0[grid]`;
             } else if (count === 4) {
-                stackFilter = `[v0][v1]hstack=inputs=2[top];[v2][v3]hstack=inputs=2[bottom];[top][bottom]vstack=inputs=2[grid]`;
+                stackFilter = `[v0][v1]hstack=inputs=2[top];[v2][v3]hstack=inputs=2[bottom];[top][bottom]vstack=inputs=2,crop=${gridWidth}:${gridHeight}:0:0[grid]`;
             } else if (count >= 5) {
-                // 3x2 grid. Top row is always 3 videos (2880px).
+                // 3x2 grid
                 stackFilter = `[v0][v1][v2]hstack=inputs=3[top];`;
                 if (count === 5) {
-                    // Bottom: 2 videos (1920px) -> Pad to 2880px (center aligned: (2880-1920)/2 = 480)
-                    stackFilter += `[v3][v4]hstack=inputs=2,pad=2880:540:480:0[bottom];[top][bottom]vstack=inputs=2[grid]`;
+                    stackFilter += `[v3][v4]hstack=inputs=2,pad=2880:540:480:0[bottom];[top][bottom]vstack=inputs=2,crop=${gridWidth}:${gridHeight}:0:0[grid]`;
                 } else {
-                    // Bottom: 3 videos (2880px)
-                    stackFilter += `[v3][v4][v5]hstack=inputs=3[bottom];[top][bottom]vstack=inputs=2[grid]`;
+                    stackFilter += `[v3][v4][v5]hstack=inputs=3[bottom];[top][bottom]vstack=inputs=2,crop=${gridWidth}:${gridHeight}:0:0[grid]`;
                 }
             } else {
                 stackFilter = `[v0]null[grid]`;
@@ -5429,21 +5568,20 @@ class VideoClipProcessor {
                 const clipStartTimeObj = new Date(firstSegTime.getTime() + clipSegments[0].clipStart * 1000);
                 const startEpoch = Math.floor(clipStartTimeObj.getTime() / 1000);
                 
-                let fontOption = "";
-                if (navigator.userAgent.includes('Windows')) {
-                    fontOption = "fontfile='C\\:/Windows/Fonts/msyh.ttc':";
-                } else if (navigator.userAgent.includes('Mac')) {
-                    // Escape spaces for FFmpeg filter
-                    fontOption = "fontfile='/System/Library/Fonts/Hiragino\\ Sans\\ GB.ttc':";
-                }
-                
-                // FFmpeg pts:localtime only accepts 2 arguments (localtime and epoch timestamp)
-                // Time format uses system locale default
-                const drawtext = `drawtext=${fontOption}text='%{pts\\:localtime\\:${startEpoch}}':x=w-text_w-20:y=20:fontsize=28:fontcolor=white:box=1:boxcolor=black@0.5`;
+                // Use bundled DejaVu font
+                const resourceDir2 = await tauri.path.resourceDir();
+                const fontSep2 = resourceDir2.includes('\\') ? '\\' : '/';
+                const fontPath2 = `${resourceDir2}assets${fontSep2}fonts${fontSep2}dejavu-sans-bold.ttf`.replace(/\\/g, '/').replace(/'/g, "'\\''");
+                const fontOption = `fontfile='${fontPath2}':`;
+
+                const drawtext = `drawtext=${fontOption}text='%{pts\\:localtime\\:${startEpoch}}':x=20:y=h-th-20:fontsize=32:fontcolor=white:borderw=3:bordercolor=black@0.8`;
                 filterComplex += (filterComplex ? ';' : '') + `[${currentOutput}]${drawtext}[ts]`;
                 currentOutput = 'ts';
             }
             
+            // Track next input index (cameras are 0..N-1)
+            let nextGridInputIdx = activeCameras.length;
+
             // Add PNG overlay filters for metadata
             if (overlayInfo && overlayInfo.pngPaths && overlayInfo.pngPaths.size > 0) {
                 const overlayResult = await metadataOverlayGenerator.generateOverlayFilter(
@@ -5453,47 +5591,82 @@ class VideoClipProcessor {
                     workDir,
                     activeCameras.length // Multiple video inputs
                 );
-                
+
                 if (overlayResult.concatFile) {
                     // Add background and concat stream to inputs
                     const bgPath = overlayInfo.pngPaths.get('__background__');
                     // Use -loop 1 for background image
                     inputArgs.push('-loop', '1', '-i', bgPath);
-                    const bgIdx = activeCameras.length; // Cameras are 0 to N-1, background is N
+                    const bgIdx = nextGridInputIdx++;
 
                     inputArgs.push('-f', 'concat', '-safe', '0', '-i', overlayResult.concatFile);
-                    const metaIdx = bgIdx + 1;
+                    const metaIdx = nextGridInputIdx++;
 
                     tempFiles.push(overlayResult.concatFile);
 
                     // Scale down metadata overlay for grid view to match single camera proportions
-                    // Front camera reference: 2896px width video -> 480px box width
-                    // Target grid width: 1920px -> 1920 * (480 / 2896) ≈ 318px
                     const referenceWidth = 2896;
                     const scaleFactor = 1920 / referenceWidth;
                     const scaledBgWidth = Math.round(480 * scaleFactor);
                     const scaledBgHeight = Math.round(65 * scaleFactor);
-                    
+
                     // Overlay background then metadata stream with scaling
                     const xExpr = '(W-w)/2';
                     const yExpr = '(H*0.97-h/2)';
                     const currentLabelStr = `[${currentOutput}]`;
-                    
+
                     // Ensure all streams start at PTS 0 and are synchronized
                     const videoStream = `${currentLabelStr}setpts=PTS-STARTPTS[v_sync]`;
                     const bgScale = `[${bgIdx}:v]trim=duration=${totalDuration},setpts=PTS-STARTPTS,scale=${scaledBgWidth}:${scaledBgHeight}[bg_scaled]`;
                     const metaScale = `[${metaIdx}:v]setpts=PTS-STARTPTS,scale=${scaledBgWidth}:${scaledBgHeight}[meta_scaled]`;
-                    
+
                     const ovPart = `${videoStream};${bgScale};${metaScale};[v_sync][bg_scaled]overlay=x=${xExpr}:y=${yExpr}:eof_action=pass[bg_v];[bg_v][meta_scaled]overlay=x=${xExpr}:y=${yExpr}:eof_action=pass[ov]`;
-                    
+
                     filterComplex += (filterComplex ? ';' : '') + ovPart;
                     currentOutput = 'ov';
                 }
             }
-            
+
+            // Add Logo watermark overlay
+            if (addLogo) {
+                try {
+                    const resourceDir = await tauri.path.resourceDir();
+                    const sep = resourceDir.includes('\\') ? '\\' : '/';
+                    const logoPath = `${resourceDir}imgs${sep}TeslaCAM_256.png`;
+                    inputArgs.push('-i', logoPath);
+                    const logoIdx = nextGridInputIdx++;
+                    const logoPart = `[${logoIdx}:v]format=rgba,colorchannelmixer=aa=0.85[logo_alpha];[${currentOutput}][logo_alpha]overlay=x=W-w-16:y=16:eof_action=pass[logo_out]`;
+                    filterComplex += (filterComplex ? ';' : '') + logoPart;
+                    currentOutput = 'logo_out';
+                } catch (logoErr) {
+                    console.warn('[FFmpeg Grid] Logo overlay failed:', logoErr);
+                }
+            }
+
+            // Add background audio input
+            let gridAudioInputIdx = -1;
+            if (addAudio) {
+                try {
+                    const audioFiles = [
+                        'M_Fischer.mp3', 'Take_Me_Down_To_The_Fashion_Show.mp3', 'Dopamina.mp3',
+                        'Do_The_Bop.mp3', 'La_Fiesta_Y_La_Cruda.mp3', 'Los_Cabos.mp3',
+                        'Chicago.mp3', 'Sugar_High.mp3', 'The_Monuments_and_Tunnels_in_Goa_and_Hampi.mp3'
+                    ];
+                    const selectedAudio = audioFiles[Math.floor(Math.random() * audioFiles.length)];
+                    const resourceDir = await tauri.path.resourceDir();
+                    const sep = resourceDir.includes('\\') ? '\\' : '/';
+                    const audioPath = `${resourceDir}audios${sep}${selectedAudio}`;
+                    inputArgs.push('-i', audioPath);
+                    gridAudioInputIdx = nextGridInputIdx++;
+                    console.log(`[FFmpeg Grid] Background audio: ${selectedAudio} (input ${gridAudioInputIdx})`);
+                } catch (audioErr) {
+                    console.warn('[FFmpeg Grid] Background audio failed:', audioErr);
+                    gridAudioInputIdx = -1;
+                }
+            }
+
             const finalOutput = `[${currentOutput}]`;
-            
-            // Calculate total duration BEFORE building args
+
             // Use filter_complex_script to avoid command line length limits on Windows
             const filterScriptPath = `${workDir}${pathSeparator}ffmpeg_filter_grid_${timestamp}.txt`;
             await fs.writeTextFile(filterScriptPath, filterComplex);
@@ -5503,10 +5676,12 @@ class VideoClipProcessor {
                 ...inputArgs,
                 '-filter_complex_script', filterScriptPath,
                 '-map', finalOutput,
-                '-map', '0:a?',
+                ...(gridAudioInputIdx >= 0 ? ['-map', `${gridAudioInputIdx}:a`] : ['-map', '0:a?']),
                 '-c:v', 'libx264',
                 '-preset', 'veryfast',
                 '-crf', '23',
+                '-c:a', 'aac',
+                ...(gridAudioInputIdx >= 0 ? ['-shortest'] : []),
                 '-r', '24',
                 '-t', String(Math.ceil(totalDuration + 1)),
                 '-y',
@@ -5525,7 +5700,7 @@ class VideoClipProcessor {
             console.log('[FFmpeg Grid] Finished processing grid');
             
             if (output.code !== 0) {
-                throw new Error(`FFmpeg 错误 (code ${output.code}): ${output.stderr || output.stdout || '未知错误'}`);
+                throw new Error(`FFmpeg 錯誤 (code ${output.code}): ${output.stderr || output.stdout || '未知錯誤'}`);
             }
             
             // Cleanup temp files
@@ -5590,9 +5765,9 @@ class VideoClipProcessor {
         return result;
     }
     
-    async processVideoWithTimestamp(clipSegments, camera, totalStartTime, totalEndTime, addTimestamp, addMetadata, eventStartTime, progressCallback, fileHandle = null) {
+    async processVideoWithTimestamp(clipSegments, camera, totalStartTime, totalEndTime, addTimestamp, addMetadata, eventStartTime, progressCallback, fileHandle = null, addLogo = false, addAudio = false) {
         if (clipSegments.length === 0) {
-            throw new Error('没有可用的视频片段');
+            throw new Error('沒有可用的影片片段');
         }
         
         progressCallback?.(this.currentLanguage === 'zh-TW' ? `處理 ${camera} 攝影機 (${clipSegments.length} 個片段)...` : `Processing ${camera} camera (${clipSegments.length} segments)...`);
@@ -5632,7 +5807,26 @@ class VideoClipProcessor {
         
         // Initialize canvas
         this.initCanvas(canvasWidth, canvasHeight);
-        
+
+        // Load custom font for timestamp
+        if (addTimestamp) {
+            await this.loadTimestampFont();
+        }
+
+        // Load logo image if needed
+        let logoImg = null;
+        if (addLogo) {
+            progressCallback?.(this.currentLanguage === 'zh-TW' ? '載入 Logo...' : 'Loading logo...');
+            logoImg = await this.loadLogoImage();
+        }
+
+        // Load background audio if needed
+        let bgAudio = null;
+        if (addAudio) {
+            progressCallback?.(this.currentLanguage === 'zh-TW' ? '載入背景音樂...' : 'Loading background audio...');
+            bgAudio = await this.loadBackgroundAudio();
+        }
+
         // Calculate total duration
         const FPS = 30;
         let totalDuration = 0;
@@ -5640,10 +5834,39 @@ class VideoClipProcessor {
             totalDuration += clipSegment.clipDuration;
         }
         const totalFrames = Math.ceil(totalDuration * FPS);
-        
+
         // Setup MediaRecorder with fixed framerate
-        const stream = this.canvas.captureStream(FPS);
-        
+        // If background audio is enabled, mix audio into the canvas stream
+        const canvasStream = this.canvas.captureStream(FPS);
+        let stream = canvasStream;
+        if (bgAudio) {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioCtx.createMediaElementSource(bgAudio);
+                const dest = audioCtx.createMediaStreamDestination();
+                source.connect(dest);
+                // Do NOT connect to destination — avoid playback during export
+                // Combine canvas video track + audio track
+                const combinedStream = new MediaStream([
+                    ...canvasStream.getVideoTracks(),
+                    ...dest.stream.getAudioTracks()
+                ]);
+                stream = combinedStream;
+                bgAudio.loop = true;
+                bgAudio.volume = 0.5;
+                bgAudio.play().catch(() => {});
+                this._bgAudioCleanup = () => {
+                    bgAudio.pause();
+                    bgAudio.currentTime = 0;
+                    source.disconnect();
+                    audioCtx.close().catch(() => {});
+                };
+            } catch (audioErr) {
+                console.warn('[Canvas] Audio mixing failed:', audioErr);
+                stream = canvasStream;
+            }
+        }
+
         // Try VP9 first, fallback to VP8 if not supported
         let mimeType = 'video/webm;codecs=vp9';
         if (!MediaRecorder.isTypeSupported(mimeType)) {
@@ -5745,10 +5968,10 @@ class VideoClipProcessor {
             const videoFile = clipSegment.segment.files[camera];
             
             if (!videoFile) {
-                throw new Error(`${camera} 摄像头在片段 ${i + 1} 中没有可用的视频文件`);
+                throw new Error(`${camera} 攝影機在片段 ${i + 1} 中沒有可用的影片檔案`);
             }
             
-            progressCallback?.(`加载片段 ${i + 1}/${clipSegments.length}...`);
+            progressCallback?.(`載入片段 ${i + 1}/${clipSegments.length}...`);
             
             // Load video for this segment only
             const video = document.createElement('video');
@@ -5863,12 +6086,17 @@ class VideoClipProcessor {
                                 const metadataData = this.getMetadataAtTime(allMetadata, i, video.currentTime);
                                 this.drawMetadata(metadataData, this.currentLanguage);
                             }
-                            
+
+                            // Draw logo watermark if enabled
+                            if (logoImg) {
+                                this.drawLogo(logoImg);
+                            }
+
                             processedFrames++;
-                            
+
                             if (processedFrames % 30 === 0) {
                                 const progress = Math.min(100, Math.round((processedFrames / totalFrames) * 100));
-                                progressCallback?.(`处理 ${camera}: ${progress}%`);
+                                progressCallback?.(`處理 ${camera}: ${progress}%`);
                             }
                         }
                         
@@ -5933,12 +6161,17 @@ class VideoClipProcessor {
                             const metadataData = this.getMetadataAtTime(allMetadata, i, t);
                             this.drawMetadata(metadataData, this.currentLanguage);
                         }
-                        
+
+                        // Draw logo watermark if enabled
+                        if (logoImg) {
+                            this.drawLogo(logoImg);
+                        }
+
                         processedFrames++;
-                        
+
                         if (processedFrames % 30 === 0) {
                             const progress = Math.min(100, Math.round((processedFrames / totalFrames) * 100));
-                            progressCallback?.(`处理 ${camera}: ${progress}%`);
+                            progressCallback?.(`處理 ${camera}: ${progress}%`);
                         }
                         
                         setTimeout(tick, frameInterval);
@@ -5987,11 +6220,15 @@ class VideoClipProcessor {
         const realTimeDuration = recordingEndTime - recordingStartTime;
         console.log(`[Single Video Export] Recording completed. Expected: ${totalDuration * 1000}ms, Calculated: ${calculatedDuration}ms, RealTime: ${realTimeDuration}ms, Frames: ${processedFrames}`);
         
-        // Clean up canvas and stream
+        // Clean up canvas, stream, and audio
         if (stream) {
             stream.getTracks().forEach(track => track.stop());
         }
-        
+        if (this._bgAudioCleanup) {
+            this._bgAudioCleanup();
+            this._bgAudioCleanup = null;
+        }
+
         if (result.saved) {
             // For streamed files, try to use FFmpeg to fix metadata
             // If FFmpeg fails, the video is still playable (just without accurate duration)
@@ -6000,11 +6237,11 @@ class VideoClipProcessor {
                     const fixed = await this.fixWebmWithFFmpeg(fileHandle, progressCallback);
                     if (!fixed) {
                         console.warn('[Grid Video Export] FFmpeg metadata fix failed, video may have inaccurate duration');
-                        progressCallback?.('视频已保存（元数据修复跳过）');
+                        progressCallback?.('影片已儲存（中繼資料修復跳過）');
                     }
                 } catch (e) {
                     console.warn('[Grid Video Export] FFmpeg metadata fix error:', e);
-                    progressCallback?.('视频已保存（元数据修复跳过）');
+                    progressCallback?.('影片已儲存（中繼資料修復跳過）');
                 }
             }
             return result;
@@ -6016,7 +6253,7 @@ class VideoClipProcessor {
         return fixedBlob;
     }
     
-    async createGridVideoFromSegments(clipSegments, cameras, totalStartTime, totalEndTime, addTimestamp, addMetadata, eventStartTime, progressCallback, fileHandle = null) {
+    async createGridVideoFromSegments(clipSegments, cameras, totalStartTime, totalEndTime, addTimestamp, addMetadata, eventStartTime, progressCallback, fileHandle = null, addLogo = false, addAudio = false) {
         progressCallback?.(this.currentLanguage === 'zh-TW' ? `準備四宮格影片 (${clipSegments.length} 個片段)...` : `Preparing grid video (${clipSegments.length} segments)...`);
         
         // Load metadata for all segments if addMetadata is enabled
@@ -6082,15 +6319,34 @@ class VideoClipProcessor {
         // Target output resolution: 1920x1080 (scales each cell to fit)
         const targetWidth = 1920;
         const targetHeight = 1080;
-        const cellWidth = Math.floor(targetWidth / gridCols);
-        const cellHeight = Math.floor(targetHeight / gridRows);
+        const gap = 6; // gap between grid cells
+        const cellWidth = Math.floor((targetWidth - (gridCols - 1) * gap) / gridCols);
+        const cellHeight = Math.floor((targetHeight - (gridRows - 1) * gap) / gridRows);
         const gridCanvasWidth = targetWidth;
         const gridCanvasHeight = targetHeight;
-        
+
         // Initialize canvas
         this.initCanvas(gridCanvasWidth, gridCanvasHeight);
 
-        
+        // Load custom font for timestamp
+        if (addTimestamp) {
+            await this.loadTimestampFont();
+        }
+
+        // Load logo image if needed
+        let logoImg = null;
+        if (addLogo) {
+            progressCallback?.(this.currentLanguage === 'zh-TW' ? '載入 Logo...' : 'Loading logo...');
+            logoImg = await this.loadLogoImage();
+        }
+
+        // Load background audio if needed
+        let bgAudio = null;
+        if (addAudio) {
+            progressCallback?.(this.currentLanguage === 'zh-TW' ? '載入背景音樂...' : 'Loading background audio...');
+            bgAudio = await this.loadBackgroundAudio();
+        }
+
         // Calculate total duration
         const FPS = 30;
         let totalDuration = 0;
@@ -6098,9 +6354,35 @@ class VideoClipProcessor {
             totalDuration += clipSegment.clipDuration;
         }
         const totalFrames = Math.ceil(totalDuration * FPS);
-        
-        // Setup MediaRecorder
-        const stream = this.canvas.captureStream(FPS);
+
+        // Setup MediaRecorder - mix in audio if needed
+        const canvasStream = this.canvas.captureStream(FPS);
+        let stream = canvasStream;
+        if (bgAudio) {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioCtx.createMediaElementSource(bgAudio);
+                const dest = audioCtx.createMediaStreamDestination();
+                source.connect(dest);
+                // Do NOT connect to destination — avoid playback during export
+                stream = new MediaStream([
+                    ...canvasStream.getVideoTracks(),
+                    ...dest.stream.getAudioTracks()
+                ]);
+                bgAudio.loop = true;
+                bgAudio.volume = 0.5;
+                bgAudio.play().catch(() => {});
+                this._bgAudioCleanup = () => {
+                    bgAudio.pause();
+                    bgAudio.currentTime = 0;
+                    source.disconnect();
+                    audioCtx.close().catch(() => {});
+                };
+            } catch (audioErr) {
+                console.warn('[Canvas Grid] Audio mixing failed:', audioErr);
+                stream = canvasStream;
+            }
+        }
         
         // Dynamic bitrate based on grid cell count
         // Optimize bitrate to reduce memory usage: ~2.5Mbps per camera is sufficient
@@ -6220,7 +6502,7 @@ class VideoClipProcessor {
         for (let i = 0; i < clipSegments.length; i++) {
             const clipSegment = clipSegments[i];
             
-            progressCallback?.(`加载片段 ${i + 1}/${clipSegments.length}...`);
+            progressCallback?.(`載入片段 ${i + 1}/${clipSegments.length}...`);
             
             // Load videos for this segment only
             const videos = {};
@@ -6255,7 +6537,7 @@ class VideoClipProcessor {
             }
             
             if (Object.keys(videos).length === 0) {
-                throw new Error(`片段 ${i + 1} 没有可用的视频文件`);
+                throw new Error(`片段 ${i + 1} 沒有可用的影片檔案`);
             }
 
             const videoCountLoaded = Object.keys(videos).length;
@@ -6363,8 +6645,8 @@ class VideoClipProcessor {
             if (is2x2) {
                 const layout = videoEntries.map(([camera, video]) => {
                     const pos = cameraPositions[camera] || { x: 0, y: 0 };
-                    const x = pos.x * cellWidth;
-                    const y = pos.y * cellHeight;
+                    const x = pos.x * (cellWidth + gap);
+                    const y = pos.y * (cellHeight + gap);
                     const srcW = video.videoWidth || cellWidth;
                     const srcH = video.videoHeight || cellHeight;
                     const scale = Math.min(cellWidth / srcW, cellHeight / srcH); // contain: 不裁剪
@@ -6382,10 +6664,12 @@ class VideoClipProcessor {
 
                 for (const [, items] of rows) {
                     items.sort((a, b) => a.x - b.x); // 左右顺序
-                    const totalW = items.reduce((sum, it) => sum + it.drawW, 0);
+                    const totalW = items.reduce((sum, it) => sum + it.drawW, 0) + (items.length - 1) * gap;
                     const startX = Math.floor((gridCanvasWidth - totalW) / 2);
                     let cursorX = startX;
-                    for (const item of items) {
+                    for (let idx = 0; idx < items.length; idx++) {
+                        const item = items[idx];
+                        if (idx > 0) cursorX += gap;
                         const offsetX = cursorX;
                         const offsetY = item.y + Math.floor((cellHeight - item.drawH) / 2);
                         this.ctx.drawImage(item.video, offsetX, offsetY, item.drawW, item.drawH);
@@ -6422,8 +6706,8 @@ class VideoClipProcessor {
             // Draw each camera view (contain: keep aspect, center inside cell)
             for (const [camera, video] of videoEntries) {
                 const pos = cameraPositions[camera] || { x: 0, y: 0 };
-                const x = pos.x * cellWidth;
-                const y = pos.y * cellHeight;
+                const x = pos.x * (cellWidth + gap);
+                const y = pos.y * (cellHeight + gap);
 
                 const srcW = video.videoWidth || cellWidth;
                 const srcH = video.videoHeight || cellHeight;
@@ -6484,39 +6768,8 @@ class VideoClipProcessor {
                     hour12: false
                 }).replace(/\//g, '-');
                 
-                this.ctx.font = 'bold 20px "Noto Sans SC", Arial';
-                const textWidth = this.ctx.measureText(timeString).width;
-                const padding = 10;
-                const boxWidth = textWidth + padding * 2;
-                const boxHeight = 32;
-
-                // 放到右上角单元格的右上侧内边距位置
-                const topRightCell = videoEntries.reduce((acc, [cam]) => {
-                    const pos = cameraPositions[cam] || { x: 0, y: 0 };
-                    if (!acc) return { cam, pos };
-                    if (pos.x > acc.pos.x || (pos.x === acc.pos.x && pos.y < acc.pos.y)) {
-                        return { cam, pos };
-                    }
-                    return acc;
-                }, null);
-                const targetX = topRightCell ? topRightCell.pos.x * cellWidth : gridCanvasWidth - cellWidth;
-                const targetY = topRightCell ? topRightCell.pos.y * cellHeight : 0;
-                const margin = 16; // base inset
-                // 额外左移：按文本宽度的一半（n/2），让长时间戳整体更向内
-                const extraLeft = textWidth / 2;
-                const tsX = targetX + cellWidth - boxWidth - margin - extraLeft;
-                const tsY = targetY + margin;
-
-
-                
-                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-                this.ctx.fillRect(tsX, tsY, boxWidth, boxHeight);
-                this.ctx.fillStyle = '#fff';
-                this.ctx.textAlign = 'right';
-                this.ctx.fillText(timeString, tsX + boxWidth - padding, tsY + 24);
-
-
-                this.ctx.textAlign = 'left';
+                // Use shared drawTimestamp for consistent style
+                this.drawTimestamp(timeString);
 
             }
             
@@ -6526,6 +6779,10 @@ class VideoClipProcessor {
                 this.drawMetadata(metadataData, this.currentLanguage);
             }
 
+            // Draw logo watermark if enabled
+            if (logoImg) {
+                this.drawLogo(logoImg);
+            }
 
         };
 
@@ -6585,7 +6842,7 @@ class VideoClipProcessor {
                         
                         if (processedFrames % 30 === 0) {
                             const progress = Math.min(100, Math.round((processedFrames / totalFrames) * 100));
-                            progressCallback?.(`处理四宫格: ${progress}%`);
+                            progressCallback?.(`處理四宮格: ${progress}%`);
                         }
                         
                         masterVideo.requestVideoFrameCallback(onFrame);
@@ -6649,7 +6906,7 @@ class VideoClipProcessor {
                         
                         if (processedFrames % 30 === 0) {
                             const progress = Math.min(100, Math.round((processedFrames / totalFrames) * 100));
-                            progressCallback?.(`处理四宫格: ${progress}%`);
+                            progressCallback?.(`處理四宮格: ${progress}%`);
                         }
                         setTimeout(tick, frameInterval);
                     };
@@ -6727,12 +6984,15 @@ class VideoClipProcessor {
             writeQueueItems: writeQueue.length,
         });
         
-        // Clean up canvas and stream
+        // Clean up canvas, stream, and audio
         if (stream) {
-
             stream.getTracks().forEach(track => track.stop());
         }
-        
+        if (this._bgAudioCleanup) {
+            this._bgAudioCleanup();
+            this._bgAudioCleanup = null;
+        }
+
         if (result.saved) {
             // For streamed files, try to use FFmpeg to fix metadata
             // If FFmpeg fails, the video is still playable (just without accurate duration)
@@ -6741,11 +7001,11 @@ class VideoClipProcessor {
                     const fixed = await this.fixWebmWithFFmpeg(fileHandle, progressCallback);
                     if (!fixed) {
                         console.warn('[Grid Video Export] FFmpeg metadata fix failed, video may have inaccurate duration');
-                        progressCallback?.('视频已保存（元数据修复跳过）');
+                        progressCallback?.('影片已儲存（中繼資料修復跳過）');
                     }
                 } catch (e) {
                     console.warn('[Grid Video Export] FFmpeg metadata fix error:', e);
-                    progressCallback?.('视频已保存（元数据修复跳过）');
+                    progressCallback?.('影片已儲存（中繼資料修復跳過）');
                 }
             }
             return result;
@@ -6757,33 +7017,123 @@ class VideoClipProcessor {
         return fixedBlob;
     }
     
-    drawTimestamp(timeString) {
-        // Dynamic scaling
-        const referenceWidth = 2896;
-        const scale = this.canvas.width / referenceWidth;
-        
-        const fontSize = Math.round(28 * scale);
-        const padding = 15 * scale;
-        const boxHeight = 40 * scale;
-        const margin = 20 * scale;
-        
-        // Measure text width
-        this.ctx.font = `bold ${fontSize}px "Noto Sans SC", Arial`;
-        const textWidth = this.ctx.measureText(timeString).width;
-        const boxWidth = textWidth + padding * 2;
-        const x = this.canvas.width - boxWidth - margin;
-        const y = margin;
-        
-        // Draw background (top-right corner)
-        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-        this.ctx.fillRect(x, y, boxWidth, boxHeight);
-        
-        // Draw text
-        this.ctx.fillStyle = '#fff';
-        this.ctx.textBaseline = 'middle';
-        this.ctx.fillText(timeString, x + padding, y + boxHeight / 2);
+    // Load custom font for timestamp
+    async loadTimestampFont() {
+        if (this._timestampFontLoaded) return;
+        try {
+            const fontPath = window.__TAURI__
+                ? await (async () => {
+                    const dir = await window.__TAURI__.path.resourceDir();
+                    const sep = dir.includes('\\') ? '\\' : '/';
+                    return getFileUrl({ path: `${dir}assets${sep}fonts${sep}dejavu-sans-bold.ttf` });
+                })()
+                : 'assets/fonts/dejavu-sans-bold.ttf';
+            const font = new FontFace('DejaVu Sans Bold', `url(${fontPath})`);
+            await font.load();
+            document.fonts.add(font);
+            this._timestampFontLoaded = true;
+        } catch (e) {
+            console.warn('[Canvas] Custom font load failed, using fallback:', e);
+        }
     }
-    
+
+    drawTimestamp(timeString) {
+        // Dynamic scaling — base size targets 1280px single camera
+        const referenceWidth = 1280;
+        const scale = this.canvas.width / referenceWidth;
+
+        const fontSize = Math.round(26 * scale);
+        const margin = 20 * scale;
+
+        const fontFamily = this._timestampFontLoaded ? '"DejaVu Sans Bold"' : 'bold Arial';
+        this.ctx.font = `bold ${fontSize}px ${fontFamily}, Arial`;
+        const x = margin;
+        const y = this.canvas.height - margin;
+
+        // White text with dark stroke (no background box)
+        this.ctx.textBaseline = 'bottom';
+        this.ctx.textAlign = 'left';
+        this.ctx.lineWidth = Math.max(3, Math.round(2.5 * scale));
+        this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+        this.ctx.strokeText(timeString, x, y);
+        this.ctx.fillStyle = '#fff';
+        this.ctx.fillText(timeString, x, y);
+    }
+
+    // Load logo image for Canvas overlay
+    async loadLogoImage() {
+        if (this._logoImage) return this._logoImage;
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => {
+                this._logoImage = img;
+                resolve(img);
+            };
+            img.onerror = (e) => {
+                console.warn('[Canvas] Logo load failed:', e);
+                resolve(null);
+            };
+            // In Tauri, use convertFileSrc; in browser, use relative path
+            if (window.__TAURI__) {
+                const tauri = window.__TAURI__;
+                tauri.path.resourceDir().then(dir => {
+                    const sep = dir.includes('\\') ? '\\' : '/';
+                    const path = `${dir}imgs${sep}TeslaCAM_256.png`;
+                    img.src = getFileUrl({ path });
+                }).catch(() => {
+                    img.src = 'imgs/TeslaCAM_256.png';
+                });
+            } else {
+                img.src = 'imgs/TeslaCAM_256.png';
+            }
+        });
+    }
+
+    // Draw logo watermark on canvas (top-right, 85% opacity)
+    drawLogo(logoImg) {
+        if (!logoImg) return;
+        const margin = 16;
+        // Scale logo relative to canvas width (~13% of canvas width)
+        const targetW = Math.round(this.canvas.width * 0.13);
+        const scale = targetW / logoImg.naturalWidth;
+        const targetH = Math.round(logoImg.naturalHeight * scale);
+        const x = this.canvas.width - targetW - margin;
+        const y = margin;
+        this.ctx.globalAlpha = 0.85;
+        this.ctx.drawImage(logoImg, x, y, targetW, targetH);
+        this.ctx.globalAlpha = 1.0;
+    }
+
+    // Load a random background audio file as HTMLAudioElement
+    async loadBackgroundAudio() {
+        const audioFiles = [
+            'M_Fischer.mp3', 'Take_Me_Down_To_The_Fashion_Show.mp3', 'Dopamina.mp3',
+            'Do_The_Bop.mp3', 'La_Fiesta_Y_La_Cruda.mp3', 'Los_Cabos.mp3',
+            'Chicago.mp3', 'Sugar_High.mp3', 'The_Monuments_and_Tunnels_in_Goa_and_Hampi.mp3'
+        ];
+        const selected = audioFiles[Math.floor(Math.random() * audioFiles.length)];
+        return new Promise((resolve) => {
+            const audio = new Audio();
+            audio.crossOrigin = 'anonymous';
+            audio.oncanplaythrough = () => resolve(audio);
+            audio.onerror = (e) => {
+                console.warn('[Canvas] Audio load failed:', e);
+                resolve(null);
+            };
+            if (window.__TAURI__) {
+                window.__TAURI__.path.resourceDir().then(dir => {
+                    const sep = dir.includes('\\') ? '\\' : '/';
+                    audio.src = getFileUrl({ path: `${dir}audios${sep}${selected}` });
+                }).catch(() => {
+                    audio.src = `audios/${selected}`;
+                });
+            } else {
+                audio.src = `audios/${selected}`;
+            }
+        });
+    }
+
     // Load metadata for all segments
     async loadMetadataForSegments(clipSegments, camera, progressCallback = null) {
         const allMetadata = [];
@@ -6791,7 +7141,7 @@ class VideoClipProcessor {
         for (let i = 0; i < clipSegments.length; i++) {
             if (this.isCancelled) throw new Error('匯出已取消');
             if (progressCallback) {
-                progressCallback(`读取视频数据 ${i + 1}/${clipSegments.length}...`);
+                progressCallback(`讀取影片資料 ${i + 1}/${clipSegments.length}...`);
             }
             const clipSegment = clipSegments[i];
             const videoFile = clipSegment.segment.files[camera];
@@ -6871,18 +7221,18 @@ class VideoClipProcessor {
      */
     drawMetadata(metadataData, lang = 'zh-TW') {
         if (!metadataData) return;
-        
+
         const d = metadataData;
-        
-        // Dynamic scaling based on reference: 480px width box is "just right" for 2896px width video
-        const referenceWidth = 2896;
+
+        // Dynamic scaling — base size targets 1280px single camera
+        const referenceWidth = 1280;
         const scale = this.canvas.width / referenceWidth;
-        
-        const barWidth = 480 * scale;
-        const barHeight = 65 * scale;
-        const iconSize = 30 * scale;
-        const borderRadius = 16 * scale;
-        const fontSize = 24 * scale;
+
+        const barWidth = 420 * scale;
+        const barHeight = 56 * scale;
+        const iconSize = 26 * scale;
+        const borderRadius = 14 * scale;
+        const fontSize = 20 * scale;
         
         // Position: Bottom center
         const x = (this.canvas.width - barWidth) / 2;
@@ -7220,6 +7570,8 @@ class TeslaCamViewer {
             exportLeftPillar: document.getElementById('exportLeftPillar'),
             exportRightPillar: document.getElementById('exportRightPillar'),
             addTimestamp: document.getElementById('addTimestamp'),
+            addLogo: document.getElementById('addLogo'),
+            addAudio: document.getElementById('addAudio'),
             mergeVideos: document.getElementById('mergeVideos'),
             useLocalFFmpeg: document.getElementById('useLocalFFmpeg'),
             ffmpegOptionRow: document.getElementById('ffmpegOptionRow'),
@@ -7826,7 +8178,7 @@ class TeslaCamViewer {
         if (validFiles.length === 0) {
             const lang = this.currentLanguage;
             alert(lang === 'zh-TW' 
-                ? '未找到有效的TeslaCam视频文件。请选择文件名格式为 "2024-01-15_12-30-00-front.mp4" 的视频文件。'
+                ? '未找到有效的 TeslaCam 影片檔案。請選擇檔案名稱格式為 "2024-01-15_12-30-00-front.mp4" 的影片檔案。'
                 : 'No valid TeslaCam video files found. Please select video files with filename format like "2024-01-15_12-30-00-front.mp4".');
             this.dom.fileInputIOS.value = '';
             this.allFiles = [];
@@ -9166,6 +9518,8 @@ class TeslaCamViewer {
         document.getElementById('selectCamerasLabel').textContent = translations.selectCameras;
         document.getElementById('addTimestampLabel').textContent = translations.addTimestamp;
         document.getElementById('addMetadataLabel').textContent = translations.addMetadata;
+        document.getElementById('addLogoLabel').textContent = translations.addLogoWatermark;
+        document.getElementById('addAudioLabel').textContent = translations.addBackgroundAudio;
         document.getElementById('mergeVideosLabel').textContent = translations.mergeVideos;
         this.dom.startClipBtn.textContent = translations.startExport;
         this.dom.cancelClipBtn.textContent = translations.cancel;
@@ -9346,7 +9700,7 @@ class TeslaCamViewer {
                     await writable.close();
 
                     console.log('File saved via File System Access API');
-                    this.showToast('视频保存成功!', 'success');
+                    this.showToast('影片儲存成功!', 'success');
                 } catch (fsError) {
                     // User cancelled the save dialog or API failed
                     if (fsError.name === 'AbortError') {
@@ -9380,11 +9734,11 @@ class TeslaCamViewer {
                     console.log('Cleanup completed');
                 }, 1000);
                 
-                this.showToast(`视频已下载: ${filename}`, 'success');
+                this.showToast(`影片已下載: ${filename}`, 'success');
             }
         } catch (downloadError) {
             console.error('Download error:', downloadError);
-            alert('下载失败: ' + downloadError.message);
+            alert('下載失敗: ' + downloadError.message);
         }
     }
 
@@ -9407,10 +9761,12 @@ class TeslaCamViewer {
         
         const addTimestamp = this.dom.addTimestamp.checked;
         const addMetadata = document.getElementById('addMetadata').checked;
+        const addLogo = this.dom.addLogo?.checked || false;
+        const addAudio = this.dom.addAudio?.checked || false;
         const mergeGrid = this.dom.mergeVideos.checked && cameras.length > 1;
         const useLocalFFmpeg = this.isTauri && this.dom.useLocalFFmpeg && this.dom.useLocalFFmpeg.checked;
-        
-        console.log('[startClipExport] Export options:', { addTimestamp, addMetadata, mergeGrid, useLocalFFmpeg, cameras });
+
+        console.log('[startClipExport] Export options:', { addTimestamp, addMetadata, addLogo, addAudio, mergeGrid, useLocalFFmpeg, cameras });
         
         // WEB ONLY: Ask for save location upfront to enable streaming
         let fileHandle = null;
@@ -9483,7 +9839,7 @@ class TeslaCamViewer {
                         this.dom.clipProgressBar.classList.remove('indeterminate');
                         const percent = parseInt(percentMatch[1], 10);
                         this.dom.clipProgressBar.style.width = Math.min(95, percent) + '%';
-                    } else if (msg.includes('FFmpeg') || msg.includes('极速导出') || msg.includes('写入磁盘')) {
+                    } else if (msg.includes('FFmpeg') || msg.includes('極速匯出') || msg.includes('寫入磁碟')) {
                         // FFmpeg export - use indeterminate animation
                         this.dom.clipProgressBar.classList.add('indeterminate');
                     } else {
@@ -9498,7 +9854,9 @@ class TeslaCamViewer {
                 useLocalFFmpeg,
                 this.currentLanguage,
                 fileHandle,
-                this.metadataManager
+                this.metadataManager,
+                addLogo,
+                addAudio
             );
             
             this.dom.clipProgressBar.classList.remove('indeterminate');
@@ -9557,11 +9915,11 @@ class TeslaCamViewer {
                                 this.showToast('保存成功!', 'success');
                             } else {
                                 // User cancelled, keep the file in original location
-                                this.showToast(`视频已保存到: ${result.path}`, 'success');
+                                this.showToast(`影片已儲存到: ${result.path}`, 'success');
                             }
                         } catch (e) {
                             console.error('File move failed:', e);
-                            this.showToast(`视频已保存到: ${result.path}`, 'success');
+                            this.showToast(`影片已儲存到: ${result.path}`, 'success');
                         }
                     } else if (result.blob) {
                         // Canvas export - blob needs to be saved
@@ -9570,7 +9928,7 @@ class TeslaCamViewer {
                         
                         if (result.blob.size === 0) {
                             console.error('Invalid blob for camera:', result.camera);
-                            alert('导出失败：生成的视频文件为空');
+                            alert('匯出失敗：產生的影片檔案為空');
                             continue;
                         }
                         
@@ -9611,7 +9969,7 @@ class TeslaCamViewer {
                 }, 2000);
             } else {
                 // Browser download - Show buttons
-                this.dom.clipProgressText.textContent = '视频已生成，请点击下方按钮保存';
+                this.dom.clipProgressText.textContent = '影片已產生，請點擊下方按鈕儲存';
                 
                 // Disable clip info and options since video is already generated
                 this.dom.clipInfo.classList.add('disabled');
@@ -9627,7 +9985,7 @@ class TeslaCamViewer {
                         const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
                         const filename = `TeslaCam_${result.camera}_${timestamp}.webm`;
                         const isGrid = result.camera === 'grid';
-                        const cameraName = isGrid ? '四宫格' : result.camera;
+                        const cameraName = isGrid ? '四宮格' : result.camera;
                         const sizeInMB = result.blob.size / (1024 * 1024);
                         const sizeText = sizeInMB >= 1 ? `${sizeInMB.toFixed(1)} MB` : `${(result.blob.size / 1024).toFixed(0)} KB`;
                         
@@ -9647,7 +10005,7 @@ class TeslaCamViewer {
                         } else {
                             btn.innerHTML = `
                                 <span class="btn-icon">💾</span>
-                                <span class="btn-text">保存 ${cameraName} 视频</span>
+                                <span class="btn-text">儲存 ${cameraName} 影片</span>
                                 <span class="btn-size">${sizeText}</span>
                             `;
                             btn.onclick = async () => {
@@ -9673,7 +10031,7 @@ class TeslaCamViewer {
             
         } catch (error) {
             console.error('Clip export error:', error);
-            const errorMsg = error?.message || error?.toString?.() || JSON.stringify(error) || '未知错误';
+            const errorMsg = error?.message || error?.toString?.() || JSON.stringify(error) || '未知錯誤';
             alert(translations.exportFailed + errorMsg);
             this.dom.clipProgress.style.display = 'none';
             this.dom.startClipBtn.disabled = false;
