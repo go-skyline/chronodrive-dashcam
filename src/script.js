@@ -4435,14 +4435,22 @@ class VideoClipProcessor {
                     }
 
                     let stackLayout = '';
+                    let xstackCount = count;
                     if (count === 4) stackLayout = `0_0|w0+${gap}_0|0_h0+${gap}|w0+${gap}_h0+${gap}`;
                     else if (count === 2) stackLayout = `0_0|w0+${gap}_0`;
-                    else if (count === 3) stackLayout = `0_0|w0+${gap}_0|0_h0+${gap}`;
+                    else if (count === 3) {
+                        // Generate "No Signal" blue placeholder as the 4th cell
+                        const segDuration = seg.clipEnd - seg.clipStart;
+                        filterComplex += `color=c=0x3B6EA5:s=${cellW}x${cellH}:d=${segDuration},format=yuv420p,drawtext=text='No Signal':fontcolor=white:fontsize=36:x=(w-tw)/2:y=(h-th)/2[v_nosig];`;
+                        scaledStreams.push('[v_nosig]');
+                        stackLayout = `0_0|w0+${gap}_0|0_h0+${gap}|w0+${gap}_h0+${gap}`;
+                        xstackCount = 4;
+                    }
                     else if (count === 6) stackLayout = `0_0|w0+${gap}_0|w0+w1+${gap*2}_0|0_h0+${gap}|w0+${gap}_h0+${gap}|w0+w1+${gap*2}_h0+${gap}`;
                     else stackLayout = '0_0';
 
                     finalStream = `[v_grid]`;
-                    filterComplex += `${scaledStreams.join('')}xstack=inputs=${count}:layout=${stackLayout}:fill=black${finalStream};`;
+                    filterComplex += `${scaledStreams.join('')}xstack=inputs=${xstackCount}:layout=${stackLayout}:fill=black${finalStream};`;
                 } else {
                     finalStream = cameraStreamNames[0].name;
                 }
@@ -5531,7 +5539,14 @@ class VideoClipProcessor {
             } else if (count === 2) {
                 stackFilter = `[v0][v1]hstack=inputs=2,crop=${gridWidth}:${gridHeight}:0:0[grid]`;
             } else if (count === 3) {
-                stackFilter = `[v0][v1]hstack=inputs=2[top];[v2]pad=1920:540:480:0[v2_padded];[top][v2_padded]vstack=inputs=2,crop=${gridWidth}:${gridHeight}:0:0[grid]`;
+                // Generate a "No Signal" blue placeholder as the 4th cell
+                const noSigW = 960 - gap / 2;
+                const noSigH = 540 - gap / 2;
+                const noSigPadW = 960;
+                const noSigPadH = 540;
+                const noSigLabel = `drawtext=${gridFontOption}text='No Signal':fontcolor=white:fontsize=36:x=(w-tw)/2:y=(h-th)/2`;
+                filterComplex += `color=c=0x3B6EA5:s=${noSigW}x${noSigH}:d=${totalDuration},fps=24,format=yuv420p,${noSigLabel},pad=${noSigPadW}:${noSigPadH}:0:0:black[v_nosig];`;
+                stackFilter = `[v0][v1]hstack=inputs=2[top];[v2][v_nosig]hstack=inputs=2[bottom];[top][bottom]vstack=inputs=2,crop=${gridWidth}:${gridHeight}:0:0[grid]`;
             } else if (count === 4) {
                 stackFilter = `[v0][v1]hstack=inputs=2[top];[v2][v3]hstack=inputs=2[bottom];[top][bottom]vstack=inputs=2,crop=${gridWidth}:${gridHeight}:0:0[grid]`;
             } else if (count >= 5) {
@@ -6643,6 +6658,13 @@ class VideoClipProcessor {
             const is2x2 = gridCols === 2 && gridRows === 2;
 
             if (is2x2) {
+                // Build layout items for all 4 grid positions (video + "No Signal" placeholders)
+                const occupiedPositions = new Set();
+                for (const [camera] of videoEntries) {
+                    const pos = cameraPositions[camera];
+                    if (pos) occupiedPositions.add(`${pos.x},${pos.y}`);
+                }
+
                 const layout = videoEntries.map(([camera, video]) => {
                     const pos = cameraPositions[camera] || { x: 0, y: 0 };
                     const x = pos.x * (cellWidth + gap);
@@ -6652,8 +6674,28 @@ class VideoClipProcessor {
                     const scale = Math.min(cellWidth / srcW, cellHeight / srcH); // contain: 不裁剪
                     const drawW = Math.ceil(srcW * scale);
                     const drawH = Math.ceil(srcH * scale);
-                    return { camera, video, x, y, row: pos.y, drawW, drawH };
+                    return { camera, video, x, y, row: pos.y, drawW, drawH, isNoSignal: false };
                 });
+
+                // Add "No Signal" virtual items for empty grid cells
+                // Use the same drawW/drawH as actual video cells so the grid stays even
+                const refItem = layout[0];
+                const noSigW = refItem ? refItem.drawW : cellWidth;
+                const noSigH = refItem ? refItem.drawH : cellHeight;
+                for (let gy = 0; gy < 2; gy++) {
+                    for (let gx = 0; gx < 2; gx++) {
+                        if (!occupiedPositions.has(`${gx},${gy}`)) {
+                            layout.push({
+                                camera: null, video: null,
+                                x: gx * (cellWidth + gap),
+                                y: gy * (cellHeight + gap),
+                                row: gy,
+                                drawW: noSigW, drawH: noSigH,
+                                isNoSignal: true
+                            });
+                        }
+                    }
+                }
 
                 // 按行处理，每行两张：总宽度 <= 1920，整行居中；左右紧贴
                 const rows = new Map();
@@ -6672,12 +6714,25 @@ class VideoClipProcessor {
                         if (idx > 0) cursorX += gap;
                         const offsetX = cursorX;
                         const offsetY = item.y + Math.floor((cellHeight - item.drawH) / 2);
-                        this.ctx.drawImage(item.video, offsetX, offsetY, item.drawW, item.drawH);
+
+                        if (item.isNoSignal) {
+                            // Draw "No Signal" blue placeholder
+                            this.ctx.fillStyle = '#3B6EA5';
+                            this.ctx.fillRect(offsetX, offsetY, item.drawW, item.drawH);
+                            this.ctx.fillStyle = '#ffffff';
+                            this.ctx.font = 'bold 36px "Noto Sans SC", Arial';
+                            const noSignalText = 'No Signal';
+                            const tw = this.ctx.measureText(noSignalText).width;
+                            this.ctx.fillText(noSignalText, offsetX + Math.floor((item.drawW - tw) / 2), offsetY + Math.floor(item.drawH / 2) + 12);
+                        } else {
+                            this.ctx.drawImage(item.video, offsetX, offsetY, item.drawW, item.drawH);
+                        }
                         cursorX += item.drawW;
 
-                        // Draw camera label (auto width)
+                        if (!item.isNoSignal) {
+                        // Draw camera label (auto width) — position relative to video, not cell
                         const labelX = offsetX + 4;
-                        const labelY = item.y + 4;
+                        const labelY = offsetY + 4;
                         this.ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
                         this.ctx.font = 'bold 12px "Noto Sans SC", Arial';
                         const lang = this.currentLanguage || 'zh-TW';
@@ -6698,6 +6753,7 @@ class VideoClipProcessor {
                         this.ctx.fillRect(labelX, labelY, boxW, boxH);
                         this.ctx.fillStyle = '#fff';
                         this.ctx.fillText(labelText, labelX + padX, labelY + 14);
+                        }
 
                     }
                 }
@@ -6720,10 +6776,10 @@ class VideoClipProcessor {
                 
                 this.ctx.drawImage(video, offsetX, offsetY, drawW, drawH);
 
-                
-                // Draw camera label (auto width)
-                const labelX = x + 4;
-                const labelY = y + 4;
+
+                // Draw camera label (auto width) — position relative to video, not cell
+                const labelX = offsetX + 4;
+                const labelY = offsetY + 4;
                 this.ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
                 this.ctx.font = 'bold 12px "Noto Sans SC", Arial';
                 
