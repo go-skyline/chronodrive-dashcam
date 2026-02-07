@@ -5548,7 +5548,7 @@ class VideoClipProcessor {
                 const eqFilter = (_cSat !== 100 || _cCon !== 100 || _cBri !== 100)
                     ? `,eq=saturation=${(_cSat / 100).toFixed(2)}:contrast=${(_cCon / 100).toFixed(2)}:brightness=${((_cBri - 100) / 100).toFixed(2)}`
                     : '';
-                filterComplex += `[${i}:v]trim=duration=${totalDuration},setpts=PTS-STARTPTS,scale=${cellW}:${cellH},setsar=1,fps=24,format=yuv420p${eqFilter},${drawLabel},pad=${padW}:${padH}:0:0:black[v${i}];`;
+                filterComplex += `[${i}:v]trim=duration=${totalDuration},setpts=PTS-STARTPTS,scale=${cellW}:${cellH},setsar=1,fps=24,format=yuva420p${eqFilter},${drawLabel},pad=${padW}:${padH}:0:0:black@0[v${i}];`;
             }
 
             // Stack layout - no shortest=1 needed since trim filter ensures equal duration
@@ -5565,7 +5565,7 @@ class VideoClipProcessor {
                 const noSigPadW = 960;
                 const noSigPadH = 540;
                 const noSigLabel = `drawtext=${gridFontOption}text='No Signal':fontcolor=white:fontsize=36:x=(w-tw)/2:y=(h-th)/2`;
-                filterComplex += `color=c=0x3B6EA5:s=${noSigW}x${noSigH}:d=${totalDuration},fps=24,format=yuv420p,${noSigLabel},pad=${noSigPadW}:${noSigPadH}:0:0:black[v_nosig];`;
+                filterComplex += `color=c=0x3B6EA5:s=${noSigW}x${noSigH}:d=${totalDuration},fps=24,format=yuva420p,${noSigLabel},pad=${noSigPadW}:${noSigPadH}:0:0:black@0[v_nosig];`;
                 stackFilter = `[v0][v1]hstack=inputs=2[top];[v2][v_nosig]hstack=inputs=2[bottom];[top][bottom]vstack=inputs=2,crop=${gridWidth}:${gridHeight}:0:0[grid]`;
             } else if (count === 4) {
                 stackFilter = `[v0][v1]hstack=inputs=2[top];[v2][v3]hstack=inputs=2[bottom];[top][bottom]vstack=inputs=2,crop=${gridWidth}:${gridHeight}:0:0[grid]`;
@@ -5583,8 +5583,15 @@ class VideoClipProcessor {
             
             filterComplex += stackFilter;
 
+            // Overlay grid (with transparent gaps) on background image
+            const bgSep = gridResourceDir.includes('\\') ? '\\' : '/';
+            const bgImgPath = `${gridResourceDir}imgs${bgSep}space-bg.jpg`.replace(/\\/g, '/');
+            inputArgs.push('-loop', '1', '-i', bgImgPath);
+            const bgInputIdx = inputArgs.filter(a => a === '-i').length - 1;
+            filterComplex += `;[${bgInputIdx}:v]scale=${gridWidth}:${gridHeight},setsar=1,trim=duration=${totalDuration},fps=24,format=yuv420p[bg];[bg][grid]overlay=0:0:format=auto,format=yuv420p[grid_bg]`;
+
             // Track current output label
-            let currentOutput = 'grid';
+            let currentOutput = 'grid_bg';
             
             // Add timestamp if needed
             if (addTimestamp) {
