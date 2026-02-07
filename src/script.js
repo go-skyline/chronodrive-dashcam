@@ -8973,16 +8973,20 @@ class TeslaCamViewer {
         const step1 = useFileInput ? translations.helpStep1IOS : translations.helpStep1;
         const step2 = useFileInput ? translations.helpStep2IOS : translations.helpStep2;
         
+        const legendText = lang === 'zh-TW' ? '開始使用' : 'Getting Started';
         const helpHtml = `
             <div class="empty-state help-text">
-                <div class="help-step">
-                    <span class="help-step-icon"><i data-lucide="usb"></i></span>
-                    <span class="help-step-text">${step1}</span>
-                </div>
-                <div class="help-step">
-                    <span class="help-step-icon"><i data-lucide="folder-open"></i></span>
-                    <span class="help-step-text">${step2}</span>
-                </div>
+                <fieldset class="help-fieldset">
+                    <legend>${legendText}</legend>
+                    <div class="help-step">
+                        <span class="help-step-icon"><i data-lucide="usb"></i></span>
+                        <span class="help-step-text">${step1}</span>
+                    </div>
+                    <div class="help-step">
+                        <span class="help-step-icon"><i data-lucide="folder-open"></i></span>
+                        <span class="help-step-text">${step2}</span>
+                    </div>
+                </fieldset>
             </div>
         `;
         this.videoListComponent.container.innerHTML = helpHtml;

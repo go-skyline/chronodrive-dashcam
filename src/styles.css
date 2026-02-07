@@ -649,33 +649,45 @@ body.dark-theme #eventFilter {
     align-items: stretch;
     justify-content: center;
     padding: 24px;
-    gap: 12px;
+}
+
+.help-fieldset {
+    border: 1px solid var(--border-primary);
+    border-radius: 10px;
+    padding: 20px 16px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.help-fieldset legend {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    padding: 0 8px;
 }
 
 .help-step {
     display: flex;
     align-items: center;
     gap: 14px;
-    padding: 14px 16px;
-    background: var(--bg-tertiary);
-    border-radius: 10px;
-    border: 1px solid var(--border-primary);
 }
 
 .help-step-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     border-radius: 8px;
     background: #234C6A;
     flex-shrink: 0;
 }
 
 .help-step-icon svg {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     stroke: #f0c040;
 }
 
@@ -1469,22 +1481,11 @@ body.dark-theme #eventFilter {
     /* Help text adjustments for mobile */
     .help-text {
         padding: 16px;
-        gap: 10px;
     }
 
-    .help-step {
-        padding: 12px 14px;
+    .help-fieldset {
+        padding: 16px 14px;
         gap: 12px;
-    }
-
-    .help-step-icon {
-        width: 32px;
-        height: 32px;
-    }
-
-    .help-step-icon svg {
-        width: 16px;
-        height: 16px;
     }
 
     .help-step-text {
