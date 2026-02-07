@@ -8975,13 +8975,18 @@ class TeslaCamViewer {
         
         const helpHtml = `
             <div class="empty-state help-text">
-                <ol>
-                    <li>${step1}</li>
-                    <li>${step2}</li>
-                </ol>
+                <div class="help-step">
+                    <span class="help-step-icon"><i data-lucide="usb"></i></span>
+                    <span class="help-step-text">${step1}</span>
+                </div>
+                <div class="help-step">
+                    <span class="help-step-icon"><i data-lucide="folder-open"></i></span>
+                    <span class="help-step-text">${step2}</span>
+                </div>
             </div>
         `;
         this.videoListComponent.container.innerHTML = helpHtml;
+        lucide.createIcons({ nodes: [this.videoListComponent.container] });
     }
 
     toggleLanguage() {

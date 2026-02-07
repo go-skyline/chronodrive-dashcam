@@ -646,61 +646,43 @@ body.dark-theme #eventFilter {
 }
 
 .help-text {
-    align-items: flex-start;
-    justify-content: flex-start;
-    text-align: left;
-    padding: 30px;
+    align-items: stretch;
+    justify-content: center;
+    padding: 24px;
+    gap: 12px;
 }
 
-.help-text ol {
-    padding-left: 20px;
-    margin-top: 0;
-    margin-bottom: 20px;
+.help-step {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: var(--bg-tertiary);
+    border-radius: 10px;
+    border: 1px solid var(--border-primary);
 }
 
-.help-text li {
-    margin-bottom: 10px;
-    line-height: 1.6;
-    color: var(--text-primary);
-}
-
-.help-text .note {
-    font-size: 0.9em;
-    color: var(--text-secondary);
-    margin-top: 15px;
-    border-top: 1px solid var(--border-primary);
-    padding-top: 15px;
-    width: 100%;
-}
-
-.help-text .desktop-tip {
-    font-size: 0.9em;
-    color: var(--text-secondary);
-    margin-top: 15px;
-    padding: 12px 15px;
-    background: rgba(26, 47, 90, 0.1);
+.help-step-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
     border-radius: 8px;
-    border-left: 3px solid #234C6A;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.help-text .desktop-link {
-    display: inline-block;
-    margin-top: 8px;
-    padding: 6px 12px;
     background: #234C6A;
-    color: white;
-    text-decoration: none;
-    border-radius: 6px;
-    font-size: 0.85em;
-    font-weight: 500;
-    transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
-.help-text .desktop-link:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(26, 47, 90, 0.4);
+.help-step-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: #f0c040;
+}
+
+.help-step-text {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--text-primary);
 }
 
 .video-card {
@@ -1486,28 +1468,27 @@ body.dark-theme #eventFilter {
 
     /* Help text adjustments for mobile */
     .help-text {
-        padding: 15px;
+        padding: 16px;
+        gap: 10px;
     }
-    
-    .help-text ol {
-        padding-left: 18px;
+
+    .help-step {
+        padding: 12px 14px;
+        gap: 12px;
     }
-    
-    .help-text li {
-        font-size: 0.95em;
-        line-height: 1.5;
-        margin-bottom: 8px;
+
+    .help-step-icon {
+        width: 32px;
+        height: 32px;
     }
-    
-    .help-text .note {
-        font-size: 0.85em;
-        padding-top: 12px;
-        margin-top: 12px;
+
+    .help-step-icon svg {
+        width: 16px;
+        height: 16px;
     }
-    
-    .help-text .desktop-tip {
-        font-size: 0.85em;
-        padding: 10px 12px;
+
+    .help-step-text {
+        font-size: 0.85rem;
     }
 }
 
