@@ -4278,7 +4278,7 @@ class VideoClipProcessor {
                          const fSep = resDir.includes('\\') ? '\\' : '/';
                          fontData = await window.__TAURI__.fs.readFile(`${resDir}assets${fSep}fonts${fSep}dejavu-sans-bold.ttf`);
                      } else {
-                         fontData = await this.fetchFileAsUint8Array('assets/fonts/dejavu-sans-bold.ttf');
+                         fontData = await this.fetchFileAsUint8Array('https://pub-007d01a7483d4a778c32807e257fedc8.r2.dev/fonts/dejavu-sans-bold.ttf');
                      }
                      await ffmpeg.writeFile('font.ttf', fontData);
                      fontFile = 'font.ttf';
@@ -4328,7 +4328,7 @@ class VideoClipProcessor {
                         const sep = resourceDir.includes('\\') ? '\\' : '/';
                         audioData = await window.__TAURI__.fs.readFile(`${resourceDir}audios${sep}${selectedAudio}`);
                     } else {
-                        audioData = await this.fetchFileAsUint8Array(`audios/${selectedAudio}`);
+                        audioData = await this.fetchFileAsUint8Array(`https://audio.tinyomnibus.me/chronodrive/${selectedAudio}`);
                     }
                     await ffmpeg.writeFile('bgm.mp3', audioData);
                     bgmFile = 'bgm.mp3';
@@ -7122,7 +7122,7 @@ class VideoClipProcessor {
                     const sep = dir.includes('\\') ? '\\' : '/';
                     return getFileUrl({ path: `${dir}assets${sep}fonts${sep}dejavu-sans-bold.ttf` });
                 })()
-                : 'assets/fonts/dejavu-sans-bold.ttf';
+                : 'https://pub-007d01a7483d4a778c32807e257fedc8.r2.dev/fonts/dejavu-sans-bold.ttf';
             const font = new FontFace('DejaVu Sans Bold', `url(${fontPath})`);
             await font.load();
             document.fonts.add(font);
@@ -7221,10 +7221,10 @@ class VideoClipProcessor {
                     const sep = dir.includes('\\') ? '\\' : '/';
                     audio.src = getFileUrl({ path: `${dir}audios${sep}${selected}` });
                 }).catch(() => {
-                    audio.src = `audios/${selected}`;
+                    audio.src = `https://audio.tinyomnibus.me/chronodrive/${selected}`;
                 });
             } else {
-                audio.src = `audios/${selected}`;
+                audio.src = `https://audio.tinyomnibus.me/chronodrive/${selected}`;
             }
         });
     }
@@ -10255,7 +10255,7 @@ function preloadFonts() {
     style.textContent = `
         @font-face {
             font-family: 'Noto Sans SC';
-            src: url('./assets/fonts/NotoSansSC-Light.ttf') format('truetype');
+            src: url('https://pub-007d01a7483d4a778c32807e257fedc8.r2.dev/fonts/NotoSansSC-Light.ttf') format('truetype');
             font-weight: 300;
             font-style: normal;
             font-display: swap;
