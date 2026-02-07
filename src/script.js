@@ -49,10 +49,9 @@
         clipStartTime: "Start Time:",
         clipEndTime: "End Time:",
         selectCameras: "Select Cameras:",
-        addTimestamp: "Add Timestamp Watermark",
-        addMetadata: "Add Driving Data Overlay",
-        addLogoWatermark: "Add Logo Watermark",
-        addBackgroundAudio: "Add Background Audio",
+        addTimestamp: "Timestamp",
+        addMetadata: "Driving Status",
+        addBackgroundAudio: "Background Music",
         colorAdjust: "Color Adjustment",
         saturation: "Saturation",
         contrast: "Contrast",
@@ -165,10 +164,9 @@
         clipStartTime: "起始時間:",
         clipEndTime: "結束時間:",
         selectCameras: "選擇攝影機:",
-        addTimestamp: "加入時間浮水印",
-        addMetadata: "加入行車數據",
-        addLogoWatermark: "加入 Logo 浮水印",
-        addBackgroundAudio: "加入背景音樂",
+        addTimestamp: "時間戳章",
+        addMetadata: "行車狀態",
+        addBackgroundAudio: "背景音樂",
         colorAdjust: "色彩調整",
         saturation: "飽和度",
         contrast: "對比",
@@ -7665,7 +7663,6 @@ class TeslaCamViewer {
             exportLeftPillar: document.getElementById('exportLeftPillar'),
             exportRightPillar: document.getElementById('exportRightPillar'),
             addTimestamp: document.getElementById('addTimestamp'),
-            addLogo: document.getElementById('addLogo'),
             addAudio: document.getElementById('addAudio'),
             saturationSlider: document.getElementById('saturationSlider'),
             contrastSlider: document.getElementById('contrastSlider'),
@@ -9631,7 +9628,6 @@ class TeslaCamViewer {
         document.getElementById('selectCamerasLabel').textContent = translations.selectCameras;
         document.getElementById('addTimestampLabel').textContent = translations.addTimestamp;
         document.getElementById('addMetadataLabel').textContent = translations.addMetadata;
-        document.getElementById('addLogoLabel').textContent = translations.addLogoWatermark;
         document.getElementById('addAudioLabel').textContent = translations.addBackgroundAudio;
         document.getElementById('colorAdjustLabel').textContent = translations.colorAdjust;
         document.getElementById('saturationLabel').textContent = translations.saturation;
@@ -9879,7 +9875,7 @@ class TeslaCamViewer {
         
         const addTimestamp = this.dom.addTimestamp.checked;
         const addMetadata = document.getElementById('addMetadata').checked;
-        const addLogo = this.dom.addLogo?.checked || false;
+        const addLogo = true;
         const addAudio = this.dom.addAudio?.checked || false;
         const mergeGrid = this.dom.mergeVideos.checked && cameras.length > 1;
         const useLocalFFmpeg = this.isTauri && this.dom.useLocalFFmpeg && this.dom.useLocalFFmpeg.checked;
