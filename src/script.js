@@ -10105,7 +10105,8 @@ class TeslaCamViewer {
                         const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
                         const filename = `TeslaCam_${result.camera}_${timestamp}.webm`;
                         const isGrid = result.camera === 'grid';
-                        const cameraName = isGrid ? '四宮格' : result.camera;
+                        const cameraNameMap = { front: translations.front, back: translations.back, left: translations.left, right: translations.right, left_pillar: translations.leftPillar, right_pillar: translations.rightPillar };
+                        const cameraName = isGrid ? (translations.mergeVideos || '四宮格') : (cameraNameMap[result.camera] || result.camera);
                         const sizeInMB = result.blob.size / (1024 * 1024);
                         const sizeText = sizeInMB >= 1 ? `${sizeInMB.toFixed(1)} MB` : `${(result.blob.size / 1024).toFixed(0)} KB`;
                         
