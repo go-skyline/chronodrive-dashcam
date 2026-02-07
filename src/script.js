@@ -7155,25 +7155,55 @@ class VideoClipProcessor {
 
     drawTimestamp(timeString) {
         // Dynamic scaling — base size targets 1280px single camera
+        // Uses same metrics as drawMetadata for visual consistency
         const referenceWidth = 1280;
         const scale = this.canvas.width / referenceWidth;
 
-        const fontSize = Math.round(26 * scale);
+        const fontSize = 20 * scale;
+        const borderRadius = 14 * scale;
+        const paddingX = 16 * scale;
+        const paddingY = 14 * scale;
         const margin = 20 * scale;
 
-        const fontFamily = this._timestampFontLoaded ? '"DejaVu Sans Bold"' : 'bold Arial';
-        this.ctx.font = `bold ${fontSize}px ${fontFamily}, Arial`;
-        const x = margin;
-        const y = this.canvas.height - margin;
-
-        // White text with dark stroke (no background box)
-        this.ctx.textBaseline = 'bottom';
+        const fontFamily = this._timestampFontLoaded ? '"DejaVu Sans Bold"' : '"Noto Sans SC"';
+        this.ctx.font = `bold ${fontSize}px ${fontFamily}, Arial, sans-serif`;
+        this.ctx.textBaseline = 'middle';
         this.ctx.textAlign = 'left';
-        this.ctx.lineWidth = Math.max(3, Math.round(2.5 * scale));
-        this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
-        this.ctx.strokeText(timeString, x, y);
-        this.ctx.fillStyle = '#fff';
-        this.ctx.fillText(timeString, x, y);
+
+        // Measure text to size the background bar
+        const textMetrics = this.ctx.measureText(timeString);
+        const barWidth = textMetrics.width + paddingX * 2;
+        const barHeight = 56 * scale;
+        const x = margin;
+        const y = this.canvas.height - barHeight - margin;
+
+        // Draw semi-transparent rounded background (same as drawMetadata)
+        this.ctx.save();
+        const gradient = this.ctx.createLinearGradient(x, y, x, y + barHeight);
+        gradient.addColorStop(0, 'rgba(20, 20, 20, 0.3)');
+        gradient.addColorStop(1, 'rgba(5, 5, 5, 0.35)');
+        this.ctx.fillStyle = gradient;
+        this.ctx.beginPath();
+        if (this.ctx.roundRect) {
+            this.ctx.roundRect(x, y, barWidth, barHeight, borderRadius);
+        } else {
+            const r = borderRadius;
+            this.ctx.moveTo(x + r, y);
+            this.ctx.lineTo(x + barWidth - r, y);
+            this.ctx.quadraticCurveTo(x + barWidth, y, x + barWidth, y + r);
+            this.ctx.lineTo(x + barWidth, y + barHeight - r);
+            this.ctx.quadraticCurveTo(x + barWidth, y + barHeight, x + barWidth - r, y + barHeight);
+            this.ctx.lineTo(x + r, y + barHeight);
+            this.ctx.quadraticCurveTo(x, y + barHeight, x, y + barHeight - r);
+            this.ctx.lineTo(x, y + r);
+            this.ctx.quadraticCurveTo(x, y, x + r, y);
+        }
+        this.ctx.fill();
+        this.ctx.restore();
+
+        // Draw white text centered vertically in bar
+        this.ctx.fillStyle = '#ffffff';
+        this.ctx.fillText(timeString, x + paddingX, y + barHeight / 2);
     }
 
     // Load logo image for Canvas overlay
