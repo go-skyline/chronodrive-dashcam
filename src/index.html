@@ -522,7 +522,7 @@
             ins.setAttribute('data-ad-format', 'auto');
             ins.setAttribute('data-full-width-responsive', 'true');
             adEl.appendChild(ins);
-            (adsbygoogle = window.adsbygoogle || []).push({});
+            try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
         }
     })();
     </script>
