@@ -415,6 +415,27 @@
                 <div class="clip-option-row">
                     <label class="clip-checkbox-label"><input type="checkbox" id="mergeVideos"> <span id="mergeVideosLabel">合成四宮格影片</span></label>
                 </div>
+                <div class="color-adjust-group">
+                    <div class="color-adjust-header">
+                        <span id="colorAdjustLabel" class="color-adjust-title">色彩調整</span>
+                        <button type="button" id="resetColorAdjust" class="color-adjust-reset" title="重置">↺ <span id="resetColorAdjustLabel">重置</span></button>
+                    </div>
+                    <div class="color-adjust-row">
+                        <label id="saturationLabel">飽和度</label>
+                        <input type="range" id="saturationSlider" min="0" max="200" value="100" step="1">
+                        <span id="saturationValue" class="color-adjust-value">100</span>
+                    </div>
+                    <div class="color-adjust-row">
+                        <label id="contrastLabel">對比</label>
+                        <input type="range" id="contrastSlider" min="50" max="150" value="100" step="1">
+                        <span id="contrastValue" class="color-adjust-value">100</span>
+                    </div>
+                    <div class="color-adjust-row">
+                        <label id="brightnessLabel">亮度</label>
+                        <input type="range" id="brightnessSlider" min="50" max="150" value="100" step="1">
+                        <span id="brightnessValue" class="color-adjust-value">100</span>
+                    </div>
+                </div>
                 <div class="clip-option-row" id="ffmpegOptionRow" style="margin-top: 8px; display: none;">
                      <label class="clip-checkbox-label" title="使用本機 FFmpeg 極速匯出（需要系統已安裝 FFmpeg）"><input type="checkbox" id="useLocalFFmpeg" checked> <span id="useLocalFFmpegLabel">使用 FFmpeg 極速匯出</span></label>
                 </div>

@@ -19,9 +19,6 @@
         helpStep2: "Select or drag the 'TeslaCam' directory from the drive",
         helpStep1IOS: "Copy TeslaCam videos to your iPad/iPhone",
         helpStep2IOS: "Select the video files (e.g., 2024-01-15_12-30-00-front.mp4)",
-        helpNote: "Note: This tool does not upload your data. All operations are performed locally. (Gaode Maps may have inaccuracies due to limited WGS-84 support.)",
-        desktopTip: "💡 Tip: Due to browser limitations, it is recommended to use the desktop version for better performance.",
-        desktopDownload: "Download Desktop Version",
         mapModalTitle: "View on Map",
         gaodeMap: "Gaode Map",
         googleMap: "Google Map",
@@ -56,6 +53,11 @@
         addMetadata: "Add Driving Data Overlay",
         addLogoWatermark: "Add Logo Watermark",
         addBackgroundAudio: "Add Background Audio",
+        colorAdjust: "Color Adjustment",
+        saturation: "Saturation",
+        contrast: "Contrast",
+        brightness: "Brightness",
+        resetColorAdjust: "Reset",
         mergeVideos: "Merge as Grid Video",
         startExport: "Start Export",
         cancel: "Cancel",
@@ -130,9 +132,6 @@
         helpStep2: "選擇或拖曳隨身碟中的 TeslaCam 目錄",
         helpStep1IOS: "將 TeslaCam 影片複製到 iPad/iPhone",
         helpStep2IOS: "選擇影片檔案（如 2024-01-15_12-30-00-front.mp4）",
-        helpNote: "注意：本工具不會上傳您的資料，所有操作皆在本機執行。（由於高德地圖對 WGS-84 支援不完整，定位可能有誤差）",
-        desktopTip: "💡 提示：由於瀏覽器有諸多限制，建議使用桌面版以獲得更好的效能體驗。",
-        desktopDownload: "下載桌面版",
         mapModalTitle: "在地圖上檢視",
         gaodeMap: "高德地圖",
         googleMap: "Google 地圖",
@@ -170,6 +169,11 @@
         addMetadata: "加入行車數據",
         addLogoWatermark: "加入 Logo 浮水印",
         addBackgroundAudio: "加入背景音樂",
+        colorAdjust: "色彩調整",
+        saturation: "飽和度",
+        contrast: "對比",
+        brightness: "亮度",
+        resetColorAdjust: "重置",
         mergeVideos: "合成四宮格影片",
         startExport: "開始匯出",
         cancel: "取消",
@@ -4869,7 +4873,7 @@ class VideoClipProcessor {
 
 
 
-    async processClip(segments, cameras, startTime, endTime, addTimestamp, addMetadata, mergeGrid, eventStartTime, progressCallback, useLocalFFmpeg = false, language = 'zh-TW', fileHandle = null, metadataManager = null, addLogo = false, addAudio = false) {
+    async processClip(segments, cameras, startTime, endTime, addTimestamp, addMetadata, mergeGrid, eventStartTime, progressCallback, useLocalFFmpeg = false, language = 'zh-TW', fileHandle = null, metadataManager = null, addLogo = false, addAudio = false, colorAdjust = {}) {
         try {
             // Reset cancellation state
             this.isCancelled = false;
@@ -4895,7 +4899,7 @@ class VideoClipProcessor {
                 if (mergeGrid && cameras.length > 1) {
                     // FFmpeg grid merge with optional timestamp and metadata
                     progressCallback?.(this.currentLanguage === 'zh-TW' ? 'FFmpeg 合成四宮格影片...' : 'FFmpeg Merging Grid Video...');
-                    const result = await this.processWithFFmpegGrid(clipSegments, cameras, addTimestamp, addMetadata, eventStartTime, progressCallback, addLogo, addAudio);
+                    const result = await this.processWithFFmpegGrid(clipSegments, cameras, addTimestamp, addMetadata, eventStartTime, progressCallback, addLogo, addAudio, colorAdjust);
                     return [result];
                 } else {
                     // FFmpeg single camera export
@@ -4903,7 +4907,7 @@ class VideoClipProcessor {
                     for (const camera of cameras) {
                         if (this.isCancelled) throw new Error(this.currentLanguage === 'zh-TW' ? '匯出已取消' : 'Export Cancelled');
                         progressCallback?.(this.currentLanguage === 'zh-TW' ? `FFmpeg 極速匯出 ${camera}...` : `FFmpeg Fast Exporting ${camera}...`);
-                        const result = await this.processWithFFmpegFull(clipSegments, camera, addTimestamp, addMetadata, eventStartTime, progressCallback, addLogo, addAudio);
+                        const result = await this.processWithFFmpegFull(clipSegments, camera, addTimestamp, addMetadata, eventStartTime, progressCallback, addLogo, addAudio, colorAdjust);
                         results.push(result);
                     }
                     return results;
@@ -4912,7 +4916,8 @@ class VideoClipProcessor {
 
             // 2. Fallback: Try native FFmpeg for fast copy (no timestamp, no grid, no metadata, no logo, no audio) - Tauri only
             const hasFFmpeg = await this.checkFFmpeg();
-            if (hasFFmpeg && !addTimestamp && !addMetadata && !mergeGrid && !addLogo && !addAudio) {
+            const _hasColor = (colorAdjust.saturation ?? 100) !== 100 || (colorAdjust.contrast ?? 100) !== 100 || (colorAdjust.brightness ?? 100) !== 100;
+            if (hasFFmpeg && !addTimestamp && !addMetadata && !mergeGrid && !addLogo && !addAudio && !_hasColor) {
                  const results = [];
                  for (const camera of cameras) {
                      progressCallback?.(`極速匯出 ${camera}...`);
@@ -4963,7 +4968,8 @@ class VideoClipProcessor {
                         progressCallback,
                         fileHandle,
                         addLogo,
-                        addAudio
+                        addAudio,
+                        colorAdjust
                     );
                     const blob = result.saved ? result.blob : result;
                     const saved = !!result.saved;
@@ -4982,7 +4988,8 @@ class VideoClipProcessor {
                             progressCallback,
                             fileHandle,
                             addLogo,
-                            addAudio
+                            addAudio,
+                            colorAdjust
                         );
                         const blob = result.saved ? result.blob : result;
                         const saved = !!result.saved;
@@ -5006,7 +5013,8 @@ class VideoClipProcessor {
                     progressCallback,
                     null,
                     addLogo,
-                    addAudio
+                    addAudio,
+                    colorAdjust
                 );
                 return [{ camera: 'grid', blob: gridBlob }];
             }
@@ -5028,12 +5036,13 @@ class VideoClipProcessor {
                     progressCallback,
                     null,
                     addLogo,
-                    addAudio
+                    addAudio,
+                    colorAdjust
                 );
 
                 results.push({ camera, blob: videoBlob });
             }
-            
+
             return results;
             
         } catch (error) {
@@ -5046,7 +5055,7 @@ class VideoClipProcessor {
     }
     
     // FFmpeg full export with optional timestamp and metadata (single camera)
-    async processWithFFmpegFull(clipSegments, camera, addTimestamp, addMetadata, eventStartTime, progressCallback, addLogo = false, addAudio = false) {
+    async processWithFFmpegFull(clipSegments, camera, addTimestamp, addMetadata, eventStartTime, progressCallback, addLogo = false, addAudio = false, colorAdjust = {}) {
         const tauri = window.__TAURI__;
         const fs = tauri.fs;
         const shell = tauri.shell;
@@ -5138,13 +5147,20 @@ class VideoClipProcessor {
             
             // Normalize video stream if we are re-encoding (timestamp, metadata, or logo enabled)
             // This is CRITICAL to fix duration shortening issues caused by PTS gaps in concat demuxer
-            if (addTimestamp || addMetadata || addLogo) {
+            const _fSat = colorAdjust.saturation ?? 100;
+            const _fCon = colorAdjust.contrast ?? 100;
+            const _fBri = colorAdjust.brightness ?? 100;
+            const hasColorAdjust = _fSat !== 100 || _fCon !== 100 || _fBri !== 100;
+            if (addTimestamp || addMetadata || addLogo || hasColorAdjust) {
                 // Use fps filter to fill gaps, setpts to ensure continuous timeline from 0
                 // and trim to force the expected duration.
-                filterComplex = `${currentLabel}fps=fps=30,setpts=PTS-STARTPTS,trim=duration=${totalDuration}[v_sync]`;
+                const eqPart = hasColorAdjust
+                    ? `,eq=saturation=${(_fSat / 100).toFixed(2)}:contrast=${(_fCon / 100).toFixed(2)}:brightness=${((_fBri - 100) / 100).toFixed(2)}`
+                    : '';
+                filterComplex = `${currentLabel}fps=fps=30,setpts=PTS-STARTPTS,trim=duration=${totalDuration}${eqPart}[v_sync]`;
                 currentLabel = '[v_sync]';
             }
-            
+
             // Add timestamp filter if enabled
             if (addTimestamp) {
                 const firstFileRef = clipSegments[0].segment.files[camera];
@@ -5348,7 +5364,7 @@ class VideoClipProcessor {
     }
     
     // FFmpeg grid merge export with optional timestamp and metadata
-    async processWithFFmpegGrid(clipSegments, cameras, addTimestamp, addMetadata, eventStartTime, progressCallback, addLogo = false, addAudio = false) {
+    async processWithFFmpegGrid(clipSegments, cameras, addTimestamp, addMetadata, eventStartTime, progressCallback, addLogo = false, addAudio = false, colorAdjust = {}) {
         const tauri = window.__TAURI__;
         const fs = tauri.fs;
         const shell = tauri.shell;
@@ -5528,7 +5544,13 @@ class VideoClipProcessor {
                 const cellH = 540 - gap / 2;
                 const padW = count <= 4 ? 960 : 960;
                 const padH = 540;
-                filterComplex += `[${i}:v]trim=duration=${totalDuration},setpts=PTS-STARTPTS,scale=${cellW}:${cellH},setsar=1,fps=24,format=yuv420p,${drawLabel},pad=${padW}:${padH}:0:0:black[v${i}];`;
+                const _cSat = colorAdjust.saturation ?? 100;
+                const _cCon = colorAdjust.contrast ?? 100;
+                const _cBri = colorAdjust.brightness ?? 100;
+                const eqFilter = (_cSat !== 100 || _cCon !== 100 || _cBri !== 100)
+                    ? `,eq=saturation=${(_cSat / 100).toFixed(2)}:contrast=${(_cCon / 100).toFixed(2)}:brightness=${((_cBri - 100) / 100).toFixed(2)}`
+                    : '';
+                filterComplex += `[${i}:v]trim=duration=${totalDuration},setpts=PTS-STARTPTS,scale=${cellW}:${cellH},setsar=1,fps=24,format=yuv420p${eqFilter},${drawLabel},pad=${padW}:${padH}:0:0:black[v${i}];`;
             }
 
             // Stack layout - no shortest=1 needed since trim filter ensures equal duration
@@ -5780,7 +5802,7 @@ class VideoClipProcessor {
         return result;
     }
     
-    async processVideoWithTimestamp(clipSegments, camera, totalStartTime, totalEndTime, addTimestamp, addMetadata, eventStartTime, progressCallback, fileHandle = null, addLogo = false, addAudio = false) {
+    async processVideoWithTimestamp(clipSegments, camera, totalStartTime, totalEndTime, addTimestamp, addMetadata, eventStartTime, progressCallback, fileHandle = null, addLogo = false, addAudio = false, colorAdjust = {}) {
         if (clipSegments.length === 0) {
             throw new Error('沒有可用的影片片段');
         }
@@ -5977,6 +5999,10 @@ class VideoClipProcessor {
         // Process segments one at a time (streaming approach to reduce memory)
         let processedFrames = 0;
         const hasVideoFrameCallback = 'requestVideoFrameCallback' in HTMLVideoElement.prototype;
+        const _tsSat = colorAdjust.saturation ?? 100;
+        const _tsCon = colorAdjust.contrast ?? 100;
+        const _tsBri = colorAdjust.brightness ?? 100;
+        const _tsColorFilter = `saturate(${_tsSat}%) contrast(${_tsCon}%) brightness(${_tsBri}%)`;
         
         for (let i = 0; i < clipSegments.length; i++) {
             const clipSegment = clipSegments[i];
@@ -6078,8 +6104,10 @@ class VideoClipProcessor {
                         
                         if (metadata.mediaTime !== lastFrameTime) {
                             lastFrameTime = metadata.mediaTime;
-                            
+
+                            this.ctx.filter = _tsColorFilter;
                             this.ctx.drawImage(video, 0, 0, this.canvas.width, this.canvas.height);
+                            this.ctx.filter = 'none';
                             
                             if (addTimestamp) {
                                 const currentTime = new Date(segmentStartTimestamp.getTime() + (video.currentTime - actualClipStart) * 1000);
@@ -6154,8 +6182,10 @@ class VideoClipProcessor {
                             return;
                         }
                         
+                        this.ctx.filter = _tsColorFilter;
                         this.ctx.drawImage(video, 0, 0, this.canvas.width, this.canvas.height);
-                        
+                        this.ctx.filter = 'none';
+
                         if (addTimestamp) {
                             const currentTime = new Date(segmentStartTimestamp.getTime() + (t - actualClipStart) * 1000);
                             const timeString = currentTime.toLocaleString('zh-CN', {
@@ -6268,7 +6298,7 @@ class VideoClipProcessor {
         return fixedBlob;
     }
     
-    async createGridVideoFromSegments(clipSegments, cameras, totalStartTime, totalEndTime, addTimestamp, addMetadata, eventStartTime, progressCallback, fileHandle = null, addLogo = false, addAudio = false) {
+    async createGridVideoFromSegments(clipSegments, cameras, totalStartTime, totalEndTime, addTimestamp, addMetadata, eventStartTime, progressCallback, fileHandle = null, addLogo = false, addAudio = false, colorAdjust = {}) {
         progressCallback?.(this.currentLanguage === 'zh-TW' ? `準備四宮格影片 (${clipSegments.length} 個片段)...` : `Preparing grid video (${clipSegments.length} segments)...`);
         
         // Load metadata for all segments if addMetadata is enabled
@@ -6649,6 +6679,11 @@ class VideoClipProcessor {
             const segmentFrameCount = Math.ceil(segmentDuration * FPS);
             console.log(`Segment ${i + 1}: clipStart=${clipSegment.clipStart}, actualEndTime=${actualEndTime}, segmentDuration=${segmentDuration}s, expectedFrames=${segmentFrameCount}`);
             
+        const _colorSat = colorAdjust.saturation ?? 100;
+        const _colorCon = colorAdjust.contrast ?? 100;
+        const _colorBri = colorAdjust.brightness ?? 100;
+        const _colorFilter = `saturate(${_colorSat}%) contrast(${_colorCon}%) brightness(${_colorBri}%)`;
+
         const renderFrame = (videoTime) => {
             // Clear canvas
             this.ctx.fillStyle = '#000';
@@ -6725,7 +6760,9 @@ class VideoClipProcessor {
                             const tw = this.ctx.measureText(noSignalText).width;
                             this.ctx.fillText(noSignalText, offsetX + Math.floor((item.drawW - tw) / 2), offsetY + Math.floor(item.drawH / 2) + 12);
                         } else {
+                            this.ctx.filter = _colorFilter;
                             this.ctx.drawImage(item.video, offsetX, offsetY, item.drawW, item.drawH);
+                            this.ctx.filter = 'none';
                         }
                         cursorX += item.drawW;
 
@@ -6773,8 +6810,10 @@ class VideoClipProcessor {
 
                 const offsetX = x + Math.floor((cellWidth - drawW) / 2);
                 const offsetY = y + Math.floor((cellHeight - drawH) / 2);
-                
+
+                this.ctx.filter = _colorFilter;
                 this.ctx.drawImage(video, offsetX, offsetY, drawW, drawH);
+                this.ctx.filter = 'none';
 
 
                 // Draw camera label (auto width) — position relative to video, not cell
@@ -7628,6 +7667,13 @@ class TeslaCamViewer {
             addTimestamp: document.getElementById('addTimestamp'),
             addLogo: document.getElementById('addLogo'),
             addAudio: document.getElementById('addAudio'),
+            saturationSlider: document.getElementById('saturationSlider'),
+            contrastSlider: document.getElementById('contrastSlider'),
+            brightnessSlider: document.getElementById('brightnessSlider'),
+            saturationValue: document.getElementById('saturationValue'),
+            contrastValue: document.getElementById('contrastValue'),
+            brightnessValue: document.getElementById('brightnessValue'),
+            resetColorAdjust: document.getElementById('resetColorAdjust'),
             mergeVideos: document.getElementById('mergeVideos'),
             useLocalFFmpeg: document.getElementById('useLocalFFmpeg'),
             ffmpegOptionRow: document.getElementById('ffmpegOptionRow'),
@@ -7825,6 +7871,27 @@ class TeslaCamViewer {
         this.dom.closeClipModalBtn.addEventListener('click', () => this.hideClipModal());
         this.dom.cancelClipBtn.addEventListener('click', () => this.hideClipModal());
         this.dom.startClipBtn.addEventListener('click', () => this.startClipExport());
+
+        // Color adjustment slider listeners
+        const bindSlider = (slider, valueEl) => {
+            if (slider && valueEl) {
+                slider.addEventListener('input', () => { valueEl.textContent = slider.value; });
+            }
+        };
+        bindSlider(this.dom.saturationSlider, this.dom.saturationValue);
+        bindSlider(this.dom.contrastSlider, this.dom.contrastValue);
+        bindSlider(this.dom.brightnessSlider, this.dom.brightnessValue);
+        if (this.dom.resetColorAdjust) {
+            this.dom.resetColorAdjust.addEventListener('click', () => {
+                this.dom.saturationSlider.value = 100;
+                this.dom.contrastSlider.value = 100;
+                this.dom.brightnessSlider.value = 100;
+                this.dom.saturationValue.textContent = '100';
+                this.dom.contrastValue.textContent = '100';
+                this.dom.brightnessValue.textContent = '100';
+            });
+        }
+
         this.dom.clipModal.addEventListener('click', (e) => {
             if (e.target === this.dom.clipModal) {
                 this.hideClipModal();
@@ -8817,22 +8884,12 @@ class TeslaCamViewer {
         const step1 = useFileInput ? translations.helpStep1IOS : translations.helpStep1;
         const step2 = useFileInput ? translations.helpStep2IOS : translations.helpStep2;
         
-        // Show desktop tip only in web environment (not in Tauri)
-        const desktopTipHtml = !this.isTauri ? `
-            <p class="desktop-tip">
-                ${translations.desktopTip}
-                <a href="https://github.com/DeaglePC/TeslaCamPlayer/releases" target="_blank" class="desktop-link">${translations.desktopDownload}</a>
-            </p>
-        ` : '';
-        
         const helpHtml = `
             <div class="empty-state help-text">
                 <ol>
                     <li>${step1}</li>
                     <li>${step2}</li>
                 </ol>
-                <p class="note">${translations.helpNote}</p>
-                ${desktopTipHtml}
             </div>
         `;
         this.videoListComponent.container.innerHTML = helpHtml;
@@ -9576,6 +9633,11 @@ class TeslaCamViewer {
         document.getElementById('addMetadataLabel').textContent = translations.addMetadata;
         document.getElementById('addLogoLabel').textContent = translations.addLogoWatermark;
         document.getElementById('addAudioLabel').textContent = translations.addBackgroundAudio;
+        document.getElementById('colorAdjustLabel').textContent = translations.colorAdjust;
+        document.getElementById('saturationLabel').textContent = translations.saturation;
+        document.getElementById('contrastLabel').textContent = translations.contrast;
+        document.getElementById('brightnessLabel').textContent = translations.brightness;
+        document.getElementById('resetColorAdjustLabel').textContent = translations.resetColorAdjust;
         document.getElementById('mergeVideosLabel').textContent = translations.mergeVideos;
         this.dom.startClipBtn.textContent = translations.startExport;
         this.dom.cancelClipBtn.textContent = translations.cancel;
@@ -9821,8 +9883,13 @@ class TeslaCamViewer {
         const addAudio = this.dom.addAudio?.checked || false;
         const mergeGrid = this.dom.mergeVideos.checked && cameras.length > 1;
         const useLocalFFmpeg = this.isTauri && this.dom.useLocalFFmpeg && this.dom.useLocalFFmpeg.checked;
+        const colorAdjust = {
+            saturation: parseInt(this.dom.saturationSlider?.value || '100', 10),
+            contrast: parseInt(this.dom.contrastSlider?.value || '100', 10),
+            brightness: parseInt(this.dom.brightnessSlider?.value || '100', 10)
+        };
 
-        console.log('[startClipExport] Export options:', { addTimestamp, addMetadata, addLogo, addAudio, mergeGrid, useLocalFFmpeg, cameras });
+        console.log('[startClipExport] Export options:', { addTimestamp, addMetadata, addLogo, addAudio, mergeGrid, useLocalFFmpeg, colorAdjust, cameras });
         
         // WEB ONLY: Ask for save location upfront to enable streaming
         let fileHandle = null;
@@ -9912,7 +9979,8 @@ class TeslaCamViewer {
                 fileHandle,
                 this.metadataManager,
                 addLogo,
-                addAudio
+                addAudio,
+                colorAdjust
             );
             
             this.dom.clipProgressBar.classList.remove('indeterminate');

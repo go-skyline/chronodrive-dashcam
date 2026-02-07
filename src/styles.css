@@ -1847,6 +1847,139 @@ body.sidebar-collapsed .open-sidebar-btn {
     transform: rotate(45deg);
 }
 
+/* Color adjustment sliders */
+.color-adjust-group {
+    margin-bottom: 10px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.color-adjust-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.color-adjust-title {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.color-adjust-reset {
+    background: none;
+    border: 1px solid rgba(35, 76, 106, 0.3);
+    color: #234C6A;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.color-adjust-reset:hover {
+    background: rgba(35, 76, 106, 0.1);
+    border-color: #234C6A;
+}
+
+.color-adjust-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.color-adjust-row:last-child {
+    margin-bottom: 0;
+}
+
+.color-adjust-row label {
+    font-size: 0.8rem;
+    min-width: 50px;
+    color: #555;
+}
+
+.color-adjust-value {
+    font-size: 0.8rem;
+    min-width: 28px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    color: #234C6A;
+    font-weight: 600;
+}
+
+.color-adjust-row input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    background: #ddd;
+    border-radius: 2px;
+    outline: none;
+}
+
+.color-adjust-row input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #234C6A;
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.color-adjust-row input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #234C6A;
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* Dark theme */
+body.dark-theme .color-adjust-group {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-theme .color-adjust-row label {
+    color: #aab;
+}
+
+body.dark-theme .color-adjust-value {
+    color: #f0c040;
+}
+
+body.dark-theme .color-adjust-reset {
+    color: #ccc;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+body.dark-theme .color-adjust-reset:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+body.dark-theme .color-adjust-row input[type="range"] {
+    background: #444;
+}
+
+body.dark-theme .color-adjust-row input[type="range"]::-webkit-slider-thumb {
+    background: #f0c040;
+    border-color: #333;
+}
+
+body.dark-theme .color-adjust-row input[type="range"]::-moz-range-thumb {
+    background: #f0c040;
+    border-color: #333;
+}
+
 /* Clip option row - two checkboxes in one line */
 .clip-option-row {
     display: flex;
