@@ -8,13 +8,13 @@
         drivingRecords: "Driving Records",
         date: "Date",
         eventType: "Event Type",
-        allTypes: "📂 All Types",
-        recentClips: "🕒 Recent Clips",
-        savedClips: "💾 Saved Clips",
-        sentryClips: "🤖 Sentry Clips",
+        allTypes: "All Types",
+        recentClips: "Recent Clips",
+        savedClips: "Saved Clips",
+        sentryClips: "Sentry Clips",
         noRecordsFound: "No records found",
-        selectFolder: "📁 Select Folder",
-        selectFiles: "📁 Select Files",
+        selectFolder: "Select Folder",
+        selectFiles: "Select Files",
         helpStep1: "Insert your Tesla USB drive into your PC",
         helpStep2: "Select or drag the 'TeslaCam' directory from the drive",
         helpStep1IOS: "Copy TeslaCam videos to your iPad/iPhone",
@@ -120,13 +120,13 @@
         drivingRecords: "行車記錄",
         date: "日期",
         eventType: "事件類型",
-        allTypes: "🎥 所有類型",
-        recentClips: "🕒 最近片段",
-        savedClips: "💾 已儲存片段",
-        sentryClips: "🤖 哨兵模式",
+        allTypes: "所有類型",
+        recentClips: "最近片段",
+        savedClips: "已儲存片段",
+        sentryClips: "哨兵模式",
         noRecordsFound: "找不到符合的記錄",
-        selectFolder: "📁 選擇資料夾",
-        selectFiles: "📁 選擇檔案",
+        selectFolder: "選擇資料夾",
+        selectFiles: "選擇檔案",
         helpStep1: "將 Tesla USB 隨身碟插入電腦",
         helpStep2: "選擇或拖曳隨身碟中的 TeslaCam 目錄",
         helpStep1IOS: "將 TeslaCam 影片複製到 iPad/iPhone",
@@ -8472,7 +8472,8 @@ class TeslaCamViewer {
         if (this.dom.headerLocationDisplay) {
             if (event.city && event.lat && event.lon) {
                 const locationText = event.street ? `${event.city} · ${event.street}` : event.city;
-                this.dom.headerLocationDisplay.innerHTML = `📍 <span class="city-text">${locationText}</span>`;
+                this.dom.headerLocationDisplay.innerHTML = `<i data-lucide="map-pin"></i> <span class="city-text">${locationText}</span>`;
+                lucide.createIcons({ nodes: [this.dom.headerLocationDisplay] });
                 this.dom.headerLocationDisplay.onclick = () => this.showMapModal(event.lat, event.lon);
                 this.dom.headerLocationDisplay.style.display = 'block';
             } else {
@@ -8941,10 +8942,13 @@ class TeslaCamViewer {
     updateThemeIcon(isDark) {
         if (this.dom.themeToggleBtn) {
             const iconEl = this.dom.themeToggleBtn.querySelector('.btn-icon');
+            const iconName = isDark ? 'moon' : 'sun';
             if (iconEl) {
-                iconEl.textContent = isDark ? '🌙' : '☀️';
+                iconEl.innerHTML = `<i data-lucide="${iconName}"></i>`;
+                lucide.createIcons({ nodes: [iconEl] });
             } else {
-                this.dom.themeToggleBtn.textContent = isDark ? '🌙' : '☀️';
+                this.dom.themeToggleBtn.innerHTML = `<i data-lucide="${iconName}"></i>`;
+                lucide.createIcons({ nodes: [this.dom.themeToggleBtn] });
             }
             this.dom.themeToggleBtn.title = i18n[this.currentLanguage][isDark ? 'toggleDay' : 'toggleNight'];
         }
@@ -10193,29 +10197,32 @@ class TeslaCamViewer {
                         if (result.saved) {
                              btn.disabled = true;
                              btn.innerHTML = `
-                                <span class="btn-icon">✅</span>
+                                <span class="btn-icon"><i data-lucide="check-circle"></i></span>
                                 <span class="btn-text">${cameraName} 已保存</span>
                             `;
                              if (result.blob && result.blob.size > 0) {
                                  btn.innerHTML += `<span class="btn-size">${sizeText}</span>`;
                              }
+                             lucide.createIcons({ nodes: [btn] });
                              this.dom.clipProgressText.textContent = translations.complete;
                         } else {
                             btn.innerHTML = `
-                                <span class="btn-icon">💾</span>
+                                <span class="btn-icon"><i data-lucide="save"></i></span>
                                 <span class="btn-text">儲存 ${cameraName} 影片</span>
                                 <span class="btn-size">${sizeText}</span>
                             `;
+                            lucide.createIcons({ nodes: [btn] });
                             btn.onclick = async () => {
                                 await this.saveVideoFile(result.blob, filename);
                                 // Mark as downloaded
                                 result.downloaded = true;
                                 btn.disabled = true;
                                 btn.innerHTML = `
-                                    <span class="btn-icon">✅</span>
+                                    <span class="btn-icon"><i data-lucide="check-circle"></i></span>
                                     <span class="btn-text">${cameraName} 已保存</span>
                                     <span class="btn-size">${sizeText}</span>
                                 `;
+                                lucide.createIcons({ nodes: [btn] });
                             };
                         }
                         downloadButtons.appendChild(btn);
@@ -10348,6 +10355,7 @@ function preloadFonts() {
 
 document.addEventListener('DOMContentLoaded', () => {
     try {
+        lucide.createIcons();
         preloadFonts();
         window.viewer = new TeslaCamViewer();
         window.addEventListener('beforeunload', () => { if (window.viewer) window.viewer.destroy(); });

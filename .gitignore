@@ -15,6 +15,9 @@ src-tauri/binaries/ffmpeg-*
 *.rs.bk
 Cargo.lock
 
+# Audio files (hosted on Cloudflare R2)
+src/audios/
+
 # OS files
 .DS_Store
 Thumbs.db
