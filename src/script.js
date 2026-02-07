@@ -5582,7 +5582,7 @@ class VideoClipProcessor {
             }
             
             filterComplex += stackFilter;
-            
+
             // Track current output label
             let currentOutput = 'grid';
             
@@ -5855,6 +5855,9 @@ class VideoClipProcessor {
             logoImg = await this.loadLogoImage();
         }
 
+        // Load background image
+        const bgImg = await this.loadExportBgImage();
+
         // Load background audio if needed
         let bgAudio = null;
         if (addAudio) {
@@ -6103,10 +6106,13 @@ class VideoClipProcessor {
                         if (metadata.mediaTime !== lastFrameTime) {
                             lastFrameTime = metadata.mediaTime;
 
+                            if (bgImg) {
+                                this.ctx.drawImage(bgImg, 0, 0, this.canvas.width, this.canvas.height);
+                            }
                             this.ctx.filter = _tsColorFilter;
                             this.ctx.drawImage(video, 0, 0, this.canvas.width, this.canvas.height);
                             this.ctx.filter = 'none';
-                            
+
                             if (addTimestamp) {
                                 const currentTime = new Date(segmentStartTimestamp.getTime() + (video.currentTime - actualClipStart) * 1000);
                                 const timeString = currentTime.toLocaleString('zh-CN', {
@@ -6180,6 +6186,9 @@ class VideoClipProcessor {
                             return;
                         }
                         
+                        if (bgImg) {
+                            this.ctx.drawImage(bgImg, 0, 0, this.canvas.width, this.canvas.height);
+                        }
                         this.ctx.filter = _tsColorFilter;
                         this.ctx.drawImage(video, 0, 0, this.canvas.width, this.canvas.height);
                         this.ctx.filter = 'none';
@@ -6382,6 +6391,9 @@ class VideoClipProcessor {
             progressCallback?.(this.currentLanguage === 'zh-TW' ? '載入 Logo...' : 'Loading logo...');
             logoImg = await this.loadLogoImage();
         }
+
+        // Load background image for grid canvas
+        const bgImg = await this.loadExportBgImage();
 
         // Load background audio if needed
         let bgAudio = null;
@@ -6683,9 +6695,13 @@ class VideoClipProcessor {
         const _colorFilter = `saturate(${_colorSat}%) contrast(${_colorCon}%) brightness(${_colorBri}%)`;
 
         const renderFrame = (videoTime) => {
-            // Clear canvas
-            this.ctx.fillStyle = '#000';
-            this.ctx.fillRect(0, 0, gridCanvasWidth, gridCanvasHeight);
+            // Draw background
+            if (bgImg) {
+                this.ctx.drawImage(bgImg, 0, 0, gridCanvasWidth, gridCanvasHeight);
+            } else {
+                this.ctx.fillStyle = '#000';
+                this.ctx.fillRect(0, 0, gridCanvasWidth, gridCanvasHeight);
+            }
             
             // 2x2 特殊逻辑：等比缩小、不裁剪；同一行的两张图水平拼成一组，整组居中，保证左右贴合无外部空隙
             const is2x2 = gridCols === 2 && gridRows === 2;
@@ -7179,6 +7195,30 @@ class VideoClipProcessor {
                 });
             } else {
                 img.src = 'imgs/TeslaCAM_256.png';
+            }
+        });
+    }
+
+    async loadExportBgImage() {
+        if (this._exportBgImage) return this._exportBgImage;
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => {
+                this._exportBgImage = img;
+                resolve(img);
+            };
+            img.onerror = () => resolve(null);
+            if (window.__TAURI__) {
+                const tauri = window.__TAURI__;
+                tauri.path.resourceDir().then(dir => {
+                    const sep = dir.includes('\\') ? '\\' : '/';
+                    img.src = getFileUrl({ path: `${dir}imgs${sep}space-bg.jpg` });
+                }).catch(() => {
+                    img.src = 'imgs/space-bg.jpg';
+                });
+            } else {
+                img.src = 'imgs/space-bg.jpg';
             }
         });
     }
