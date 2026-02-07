@@ -118,17 +118,17 @@ body {
 .site-footer a:hover {
     color: #ffd866;
 }
-.footer-opensource {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    flex-wrap: wrap;
+.footer-brand {
+    font-weight: 600;
+}
+.footer-links {
+    margin: 4px 0;
 }
 .footer-github-link {
     display: inline-flex;
     align-items: center;
     vertical-align: middle;
+    margin-left: 2px;
 }
 .footer-github-link svg {
     fill: #f0c040;
