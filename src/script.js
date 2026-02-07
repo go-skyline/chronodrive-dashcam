@@ -128,7 +128,7 @@
         selectFolder: "選擇資料夾",
         selectFiles: "選擇檔案",
         helpStep1: "將 Tesla USB 隨身碟插入電腦",
-        helpStep2: "選擇或拖曳隨身碟中的 TeslaCam 目錄",
+        helpStep2: "拖曳 USB TeslaCam 目錄",
         helpStep1IOS: "將 TeslaCam 影片複製到 iPad/iPhone",
         helpStep2IOS: "選擇影片檔案（如 2024-01-15_12-30-00-front.mp4）",
         mapModalTitle: "在地圖上檢視",
