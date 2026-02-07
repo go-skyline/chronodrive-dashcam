@@ -1,7 +1,7 @@
  const i18n = {
     en: {
-        pageTitle: "TDashcam Studio",
-        headerTitle: "TDashcam Studio",
+        pageTitle: "Chronodrive Dashcam",
+        headerTitle: "Chronodrive Dashcam",
         toggleSidebar: "Toggle Sidebar",
         toggleTheme: "Toggle Theme",
         toggleLanguage: "切換至中文",
@@ -112,8 +112,8 @@
         exportMetadataNoData: "No metadata available to export"
     },
     'zh-TW': {
-        pageTitle: "TDashcam Studio",
-        headerTitle: "TDashcam Studio",
+        pageTitle: "Chronodrive Dashcam",
+        headerTitle: "Chronodrive Dashcam",
         toggleSidebar: "切換側邊欄",
         toggleTheme: "切換主題",
         toggleLanguage: "Switch to English",
@@ -10359,7 +10359,7 @@ document.addEventListener('DOMContentLoaded', () => {
         preloadFonts();
         window.viewer = new TeslaCamViewer();
         window.addEventListener('beforeunload', () => { if (window.viewer) window.viewer.destroy(); });
-        console.log('TDashcam Studio Initialized');
+        console.log('Chronodrive Dashcam Initialized');
     } catch (error) {
         console.error("Initialization failed:", error);
         alert("Player initialization failed. Check console for details.");
