@@ -799,9 +799,14 @@ body.dark-theme #eventFilter {
     width: 24px;
     height: 24px;
     border-radius: 6px;
-    font-size: 1rem;
     margin-right: 8px;
     vertical-align: middle;
+    flex-shrink: 0;
+}
+
+.video-type-tag svg {
+    width: 14px;
+    height: 14px;
 }
 
 .sidebar-footer {

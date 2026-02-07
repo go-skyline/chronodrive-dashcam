@@ -2297,13 +2297,15 @@ class VideoListComponent {
         }
 
         const eventTypeLabel = this.getEventTypeLabel(event.eventType);
+        const eventTypeIcon = this.getEventTypeIcon(event.eventType);
 
         infoDiv.innerHTML = `
             <div class="video-time">
-                <span class="video-type-tag" title="${eventTypeLabel}">${eventTypeLabel.split(' ')[0]}</span>
+                <span class="video-type-tag" title="${eventTypeLabel}"><i data-lucide="${eventTypeIcon}"></i></span>
                 ${cityHtml}${timeString}
             </div>
         `;
+        lucide.createIcons({ nodes: [infoDiv] });
         card.appendChild(infoDiv);
         
         // Attach event listener to the card, but check for city-link target
@@ -2322,6 +2324,15 @@ class VideoListComponent {
     getEventTypeLabel(type) {
         const lang = this.viewer.currentLanguage;
         return i18n[lang][type.charAt(0).toLowerCase() + type.slice(1)] || type;
+    }
+
+    getEventTypeIcon(type) {
+        const iconMap = {
+            'RecentClips': 'clock',
+            'SavedClips': 'save',
+            'SentryClips': 'bot'
+        };
+        return iconMap[type] || 'video';
     }
 
     parseTimestamp(timestamp) {
