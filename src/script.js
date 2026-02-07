@@ -585,7 +585,7 @@ class MetadataOverlayGenerator {
         // NO BACKGROUND DRAWN HERE - IT WILL BE OVERLAID SEPARATELY IN FFMPEG
 
         // Draw items (Using FIXED COORDINATES to prevent jittering)
-        ctx.font = 'bold 24px "Noto Sans SC", Arial, sans-serif';
+        ctx.font = 'bold 24px "DejaVu Sans Bold", Arial, sans-serif';
         ctx.textBaseline = 'middle';
         const yCenter = barHeight / 2;
         
@@ -7165,7 +7165,7 @@ class VideoClipProcessor {
         const paddingY = 14 * scale;
         const margin = 20 * scale;
 
-        const fontFamily = this._timestampFontLoaded ? '"DejaVu Sans Bold"' : '"Noto Sans SC"';
+        const fontFamily = '"DejaVu Sans Bold"';
         this.ctx.font = `bold ${fontSize}px ${fontFamily}, Arial, sans-serif`;
         this.ctx.textBaseline = 'middle';
         this.ctx.textAlign = 'left';
@@ -7461,7 +7461,7 @@ class VideoClipProcessor {
         
         // Draw items (Using SCALED COORDINATES)
         this.ctx.save();
-        this.ctx.font = `bold ${fontSize}px "Noto Sans SC", Arial, sans-serif`;
+        this.ctx.font = `bold ${fontSize}px "DejaVu Sans Bold", Arial, sans-serif`;
         this.ctx.textBaseline = 'middle';
         
         // Speed (Scaled at 125)
