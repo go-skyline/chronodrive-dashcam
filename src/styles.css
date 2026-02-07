@@ -104,12 +104,12 @@ body {
     background: #234C6A;
     color: #ffffff;
     text-align: center;
-    padding: 12px 16px;
+    padding: 6px 16px;
     font-size: 12px;
-    line-height: 1.6;
+    line-height: 1.4;
 }
 .site-footer p {
-    margin: 4px 0;
+    margin: 2px 0;
 }
 .site-footer a {
     color: #f0c040;
