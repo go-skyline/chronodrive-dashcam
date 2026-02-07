@@ -695,6 +695,7 @@ body.dark-theme #eventFilter {
     font-size: 0.9rem;
     line-height: 1.5;
     color: var(--text-primary);
+    text-align: left;
 }
 
 .video-card {
