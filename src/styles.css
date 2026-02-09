@@ -1478,7 +1478,15 @@ body.dark-theme #eventFilter {
 
     .help-card {
         padding: 10px 12px;
-        gap: 12px;
+        gap: 10px;
+    }
+
+    .help-step-icon {
+        display: none;
+    }
+
+    .help-step {
+        gap: 0;
     }
 
     .help-step-text {
