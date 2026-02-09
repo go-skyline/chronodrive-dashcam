@@ -429,6 +429,7 @@
             <div id="downloadButtons" class="download-buttons" style="display: none;">
                 <!-- Buttons will be injected here -->
             </div>
+            <div class="clip-modal-ad" id="clipModalAd"></div>
             <div class="modal-buttons">
                 <button id="startClipBtn" class="map-btn gaode">開始匯出</button>
                 <button id="cancelClipBtn" class="map-btn" style="background-color: #6c757d;">取消</button>
@@ -541,6 +542,20 @@
             ins2.setAttribute('data-ad-slot', '5432559843');
             ins2.setAttribute('data-ad-format', 'rectangle');
             sidebarAdEl.appendChild(ins2);
+            try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
+        }
+
+        // 第三個廣告：匯出 modal 內橫幅
+        var clipAdEl = document.getElementById('clipModalAd');
+        if (clipAdEl) {
+            var ins3 = document.createElement('ins');
+            ins3.className = 'adsbygoogle';
+            ins3.style.display = 'block';
+            ins3.setAttribute('data-ad-client', 'ca-pub-8494448987528606');
+            ins3.setAttribute('data-ad-slot', '2811764469');
+            ins3.setAttribute('data-ad-format', 'auto');
+            ins3.setAttribute('data-full-width-responsive', 'true');
+            clipAdEl.appendChild(ins3);
             try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
         }
     })();

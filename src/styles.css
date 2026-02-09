@@ -827,6 +827,11 @@ body.dark-theme #eventFilter {
     box-shadow: 0 6px 20px rgba(240, 192, 64, 0.4);
 }
 
+.clip-modal-ad {
+    margin: 12px 0;
+    min-height: 50px;
+}
+
 .sidebar-ad-container {
     margin-top: 12px;
     padding-top: 12px;
