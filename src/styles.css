@@ -645,24 +645,19 @@ body.dark-theme #eventFilter {
 .help-text {
     align-items: stretch;
     justify-content: center;
-    padding: 24px;
+    padding: 0;
 }
 
-.help-fieldset {
-    border: 1px solid var(--border-primary);
-    border-radius: 10px;
-    padding: 20px 16px;
-    margin: 0;
+.help-card {
+    padding: 12px 15px;
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(26, 47, 90, 0.1);
+    border-radius: 8px;
+    border-left: 3px solid #234C6A;
     display: flex;
     flex-direction: column;
     gap: 14px;
-}
-
-.help-fieldset legend {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    padding: 0 8px;
 }
 
 .help-step {
@@ -1478,11 +1473,11 @@ body.dark-theme #eventFilter {
 
     /* Help text adjustments for mobile */
     .help-text {
-        padding: 16px;
+        padding: 0;
     }
 
-    .help-fieldset {
-        padding: 16px 14px;
+    .help-card {
+        padding: 10px 12px;
         gap: 12px;
     }
 
