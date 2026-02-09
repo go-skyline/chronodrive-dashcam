@@ -826,6 +826,14 @@ body.dark-theme #eventFilter {
     box-shadow: 0 6px 20px rgba(240, 192, 64, 0.4);
 }
 
+.sidebar-ad-container {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-primary);
+    display: flex;
+    justify-content: center;
+}
+
 /* Player Area */
 .player-area {
     flex: 1;

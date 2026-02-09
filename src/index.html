@@ -48,6 +48,7 @@
                 <button id="selectFolderBtn">選擇資料夾</button>
                 <input type="file" id="folderInput" webkitdirectory directory multiple style="display: none;">
                 <input type="file" id="fileInputIOS" multiple accept="video/mp4,video/*" style="display: none;">
+                <div class="sidebar-ad-container" id="sidebarAdContainer"></div>
             </div>
         </div>
         <div class="main-content">
@@ -525,17 +526,18 @@
             adEl.appendChild(ins);
             try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
 
-            // 第二個廣告：正方形
+        }
+
+        // 第二個廣告：sidebar footer 下方
+        var sidebarAdEl = document.getElementById('sidebarAdContainer');
+        if (sidebarAdEl) {
             var ins2 = document.createElement('ins');
             ins2.className = 'adsbygoogle';
             ins2.style.display = 'block';
-            ins2.style.width = '160px';
-            ins2.style.height = '250px';
-            ins2.style.marginTop = '12px';
             ins2.setAttribute('data-ad-client', 'ca-pub-8494448987528606');
             ins2.setAttribute('data-ad-slot', '5432559843');
             ins2.setAttribute('data-ad-format', 'rectangle');
-            adEl.appendChild(ins2);
+            sidebarAdEl.appendChild(ins2);
             try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
         }
     })();
