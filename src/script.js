@@ -6799,11 +6799,10 @@ class VideoClipProcessor {
                         cursorX += item.drawW;
 
                         if (!item.isNoSignal) {
-                        // Draw camera label (auto width) — position relative to video, not cell
-                        const labelX = offsetX + 4;
-                        const labelY = offsetY + 4;
-                        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-                        this.ctx.font = 'bold 12px "Noto Sans SC", Arial';
+                        // Draw camera label (auto width) — match Player CSS style
+                        const labelX = offsetX + 8;
+                        const labelY = offsetY + 8;
+                        this.ctx.font = 'bold 12px Arial, sans-serif';
                         const lang = this.currentLanguage || 'zh-TW';
                         const cameraNames = {
                             front: { en: 'FRONT', 'zh-TW': '前視' },
@@ -6815,13 +6814,16 @@ class VideoClipProcessor {
                         };
                         const labelText = cameraNames[item.camera]?.[lang] || item.camera.toUpperCase();
                         const textW = this.ctx.measureText(labelText).width;
-                        const padX = 6;
-                        const padY = 4;
+                        const padX = 8;
+                        const padY = 3;
                         const boxW = Math.ceil(textW + padX * 2);
-                        const boxH = 20 + padY * 0; // 20 高度够 12px 字体
-                        this.ctx.fillRect(labelX, labelY, boxW, boxH);
+                        const boxH = Math.ceil(12 + padY * 2);
+                        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+                        this.ctx.beginPath();
+                        this.ctx.roundRect(labelX, labelY, boxW, boxH, 4);
+                        this.ctx.fill();
                         this.ctx.fillStyle = '#fff';
-                        this.ctx.fillText(labelText, labelX + padX, labelY + 14);
+                        this.ctx.fillText(labelText, labelX + padX, labelY + padY + 11);
                         }
 
                     }
@@ -6848,12 +6850,11 @@ class VideoClipProcessor {
                 this.ctx.filter = 'none';
 
 
-                // Draw camera label (auto width) — position relative to video, not cell
-                const labelX = offsetX + 4;
-                const labelY = offsetY + 4;
-                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-                this.ctx.font = 'bold 12px "Noto Sans SC", Arial';
-                
+                // Draw camera label (auto width) — match Player CSS style
+                const labelX = offsetX + 8;
+                const labelY = offsetY + 8;
+                this.ctx.font = 'bold 12px Arial, sans-serif';
+
                 const lang = this.currentLanguage || 'zh-TW';
                 const cameraNames = {
                     front: { en: 'FRONT', 'zh-TW': '前視' },
@@ -6865,13 +6866,16 @@ class VideoClipProcessor {
                 };
                 const labelText = cameraNames[camera]?.[lang] || camera.toUpperCase();
                 const textW = this.ctx.measureText(labelText).width;
-                const padX = 6;
-                const padY = 4;
+                const padX = 8;
+                const padY = 3;
                 const boxW = Math.ceil(textW + padX * 2);
-                const boxH = 20 + padY * 0;
-                this.ctx.fillRect(labelX, labelY, boxW, boxH);
+                const boxH = Math.ceil(12 + padY * 2);
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+                this.ctx.beginPath();
+                this.ctx.roundRect(labelX, labelY, boxW, boxH, 4);
+                this.ctx.fill();
                 this.ctx.fillStyle = '#fff';
-                this.ctx.fillText(labelText, labelX + padX, labelY + 14);
+                this.ctx.fillText(labelText, labelX + padX, labelY + padY + 11);
 
 
 
