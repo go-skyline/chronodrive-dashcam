@@ -830,13 +830,8 @@ body.dark-theme #eventFilter {
 .clip-modal-ad {
     margin: 12px 0;
     min-height: 50px;
-    max-height: 120px !important;
-    overflow: hidden !important;
-}
-
-.clip-modal-ad ins,
-.clip-modal-ad iframe {
-    max-height: 120px !important;
+    max-height: 120px;
+    overflow: hidden;
 }
 
 .sidebar-ad-container {
