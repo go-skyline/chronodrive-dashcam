@@ -6823,7 +6823,9 @@ class VideoClipProcessor {
                         this.ctx.roundRect(labelX, labelY, boxW, boxH, 4);
                         this.ctx.fill();
                         this.ctx.fillStyle = '#fff';
-                        this.ctx.fillText(labelText, labelX + padX, labelY + padY + 11);
+                        this.ctx.textBaseline = 'middle';
+                        this.ctx.fillText(labelText, labelX + padX, labelY + boxH / 2);
+                        this.ctx.textBaseline = 'alphabetic';
                         }
 
                     }
@@ -6875,7 +6877,9 @@ class VideoClipProcessor {
                 this.ctx.roundRect(labelX, labelY, boxW, boxH, 4);
                 this.ctx.fill();
                 this.ctx.fillStyle = '#fff';
-                this.ctx.fillText(labelText, labelX + padX, labelY + padY + 11);
+                this.ctx.textBaseline = 'middle';
+                this.ctx.fillText(labelText, labelX + padX, labelY + boxH / 2);
+                this.ctx.textBaseline = 'alphabetic';
 
 
 
