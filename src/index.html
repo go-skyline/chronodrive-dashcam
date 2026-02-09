@@ -545,9 +545,10 @@
             try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
         }
 
-        // 第三個廣告：匯出 modal 內橫幅
-        var clipAdEl = document.getElementById('clipModalAd');
-        if (clipAdEl) {
+        // 第三個廣告：匯出 modal 內橫幅（延遲到 modal 開啟時才插入）
+        window._loadClipModalAd = function() {
+            var clipAdEl = document.getElementById('clipModalAd');
+            if (!clipAdEl || clipAdEl.querySelector('.adsbygoogle')) return;
             var ins3 = document.createElement('ins');
             ins3.className = 'adsbygoogle';
             ins3.style.display = 'block';
@@ -557,7 +558,7 @@
             ins3.setAttribute('data-full-width-responsive', 'true');
             clipAdEl.appendChild(ins3);
             try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
-        }
+        };
     })();
     </script>
 </body>

@@ -9851,6 +9851,8 @@ class TeslaCamViewer {
         // Show modal
         this.dom.clipModal.style.display = 'flex';
         setTimeout(() => this.dom.clipModal.classList.add('show'), 10);
+        // 載入 modal 內廣告（需等 display 不為 none 才有寬度）
+        setTimeout(() => { if (window._loadClipModalAd) window._loadClipModalAd(); }, 100);
     }
     
     hideClipModal() {
