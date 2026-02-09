@@ -797,12 +797,13 @@ body.dark-theme #eventFilter {
 }
 
 .sidebar-footer {
-    flex-shrink: 0;
+    flex-shrink: 1;
     width: 100%;
     padding: 1rem;
     border-top: 1px solid var(--border-primary);
     background-color: var(--bg-secondary);
     z-index: 10;
+    overflow-y: auto;
     transition: background-color 0.3s, border-color 0.3s;
 }
 
