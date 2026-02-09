@@ -2398,12 +2398,12 @@ class MultiCameraPlayer {
                          label.className = 'camera-label';
                          // Style is handled in CSS, but ensure it exists
                          label.style.position = 'absolute';
-                         label.style.top = '10px';
-                         label.style.left = '10px';
+                         label.style.top = '8px';
+                         label.style.left = '8px';
                          label.style.color = 'white';
-                         label.style.backgroundColor = 'rgba(0,0,0,0.5)';
-                         label.style.padding = '5px 10px';
-                         label.style.fontSize = '14px';
+                         label.style.backgroundColor = 'rgba(0,0,0,0.6)';
+                         label.style.padding = '3px 8px';
+                         label.style.fontSize = '12px';
                          label.style.pointerEvents = 'none';
                          label.style.zIndex = '10';
                          container.appendChild(label);
@@ -2412,14 +2412,14 @@ class MultiCameraPlayer {
                      // Note: We access window.viewer carefully
                      const lang = (window.viewer && window.viewer.currentLanguage) || 'zh-TW';
                      const cameraNames = {
-                        front: { en: 'Front', zh: '前视' },
-                        left_pillar: { en: 'Left Pillar', zh: '左柱' },
-                        right_pillar: { en: 'Right Pillar', zh: '右柱' },
-                        back: { en: 'Back', zh: '后视' },
-                        left: { en: 'Left', zh: '左侧' },
-                        right: { en: 'Right', zh: '右侧' }
+                        front: { en: 'FRONT', 'zh-TW': '前視' },
+                        left_pillar: { en: 'LEFT PILLAR', 'zh-TW': '左柱' },
+                        right_pillar: { en: 'RIGHT PILLAR', 'zh-TW': '右柱' },
+                        back: { en: 'BACK', 'zh-TW': '後視' },
+                        left: { en: 'LEFT', 'zh-TW': '左側' },
+                        right: { en: 'RIGHT', 'zh-TW': '右側' }
                      };
-                     label.innerText = cameraNames[camera]?.[lang] || camera;
+                     label.innerText = cameraNames[camera]?.[lang] || camera.toUpperCase();
                      label.style.display = 'block';
                 }
             });
@@ -5524,12 +5524,12 @@ class VideoClipProcessor {
             // Camera names for localization
             const lang = this.currentLanguage || 'zh-TW';
             const cameraNames = {
-                front: { en: 'Front', zh: '前视' },
-                left_pillar: { en: 'Left Pillar', zh: '左柱' },
-                right_pillar: { en: 'Right Pillar', zh: '右柱' },
-                back: { en: 'Back', zh: '后视' },
-                left: { en: 'Left', zh: '左侧' },
-                right: { en: 'Right', zh: '右侧' }
+                front: { en: 'FRONT', 'zh-TW': '前視' },
+                left_pillar: { en: 'LEFT PILLAR', 'zh-TW': '左柱' },
+                right_pillar: { en: 'RIGHT PILLAR', 'zh-TW': '右柱' },
+                back: { en: 'BACK', 'zh-TW': '後視' },
+                left: { en: 'LEFT', 'zh-TW': '左側' },
+                right: { en: 'RIGHT', 'zh-TW': '右側' }
             };
 
             // Gap between grid cells (pixels)
@@ -5546,7 +5546,7 @@ class VideoClipProcessor {
                 const camName = activeCameras[i];
                 const labelText = cameraNames[camName]?.[lang] || camName.toUpperCase();
 
-                const drawLabel = `drawtext=${gridFontOption}text='${labelText}':x=10:y=10:fontsize=18:fontcolor=white:box=1:boxcolor=black@0.5`;
+                const drawLabel = `drawtext=${gridFontOption}text='${labelText}':x=10:y=10:fontsize=18:fontcolor=white:box=1:boxcolor=black@0.6`;
                 // Scale to slightly smaller size, then pad with black for gap effect
                 // Each cell gets gap/2 padding on right and bottom; after stacking, adjacent cells share gap
                 const cellW = count <= 4 ? 960 - gap / 2 : 960 - gap / 2;
@@ -6806,12 +6806,12 @@ class VideoClipProcessor {
                         this.ctx.font = 'bold 12px "Noto Sans SC", Arial';
                         const lang = this.currentLanguage || 'zh-TW';
                         const cameraNames = {
-                            front: { en: 'Front', zh: '前视' },
-                            left_pillar: { en: 'Left Pillar', zh: '左柱' },
-                            right_pillar: { en: 'Right Pillar', zh: '右柱' },
-                            back: { en: 'Back', zh: '后视' },
-                            left: { en: 'Left', zh: '左侧' },
-                            right: { en: 'Right', zh: '右侧' }
+                            front: { en: 'FRONT', 'zh-TW': '前視' },
+                            left_pillar: { en: 'LEFT PILLAR', 'zh-TW': '左柱' },
+                            right_pillar: { en: 'RIGHT PILLAR', 'zh-TW': '右柱' },
+                            back: { en: 'BACK', 'zh-TW': '後視' },
+                            left: { en: 'LEFT', 'zh-TW': '左側' },
+                            right: { en: 'RIGHT', 'zh-TW': '右側' }
                         };
                         const labelText = cameraNames[item.camera]?.[lang] || item.camera.toUpperCase();
                         const textW = this.ctx.measureText(labelText).width;
@@ -6856,12 +6856,12 @@ class VideoClipProcessor {
                 
                 const lang = this.currentLanguage || 'zh-TW';
                 const cameraNames = {
-                    front: { en: 'Front', zh: '前视' },
-                    left_pillar: { en: 'Left Pillar', zh: '左柱' },
-                    right_pillar: { en: 'Right Pillar', zh: '右柱' },
-                    back: { en: 'Back', zh: '后视' },
-                    left: { en: 'Left', zh: '左侧' },
-                    right: { en: 'Right', zh: '右侧' }
+                    front: { en: 'FRONT', 'zh-TW': '前視' },
+                    left_pillar: { en: 'LEFT PILLAR', 'zh-TW': '左柱' },
+                    right_pillar: { en: 'RIGHT PILLAR', 'zh-TW': '右柱' },
+                    back: { en: 'BACK', 'zh-TW': '後視' },
+                    left: { en: 'LEFT', 'zh-TW': '左側' },
+                    right: { en: 'RIGHT', 'zh-TW': '右側' }
                 };
                 const labelText = cameraNames[camera]?.[lang] || camera.toUpperCase();
                 const textW = this.ctx.measureText(labelText).width;
