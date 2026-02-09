@@ -145,9 +145,6 @@ body {
     flex-shrink: 0;
     overflow-y: auto;
     padding: 8px;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
     background: var(--bg-secondary, #f0f0f0);
     border-left: 1px solid var(--border-color, #ddd);
 }
