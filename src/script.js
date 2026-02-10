@@ -118,7 +118,8 @@
         accelZ: "Accel Z",
         exportMetadata: "Export CSV",
         exportMetadataSuccess: "Metadata exported successfully",
-        exportMetadataNoData: "No metadata available to export"
+        exportMetadataNoData: "No metadata available to export",
+        help: "Help"
     },
     'zh-TW': {
         pageTitle: "Chronodrive Dashcam",
@@ -241,7 +242,8 @@
         accelZ: "加速度 Z",
         exportMetadata: "匯出 CSV",
         exportMetadataSuccess: "中繼資料匯出成功",
-        exportMetadataNoData: "沒有可匯出的中繼資料"
+        exportMetadataNoData: "沒有可匯出的中繼資料",
+        help: "說明"
     }
 };
 
@@ -7760,6 +7762,9 @@ class TeslaCamViewer {
             overlay: document.getElementById('overlay'),
             themeToggleBtn: document.getElementById('themeToggleBtn'),
             langToggleBtn: document.getElementById('langToggleBtn'),
+            helpBtn: document.getElementById('helpBtn'),
+            helpModal: document.getElementById('helpModal'),
+            closeHelpModalBtn: document.getElementById('closeHelpModalBtn'),
             mapModal: document.getElementById('mapModal'),
             mapModalTitle: document.getElementById('mapModalTitle'),
             gaodeMapBtn: document.getElementById('gaodeMapBtn'),
@@ -7985,6 +7990,15 @@ class TeslaCamViewer {
                 this.hideMapModal();
             }
         });
+        // Help Modal Listeners
+        this.dom.helpBtn.addEventListener('click', () => this.showHelpModal());
+        this.dom.closeHelpModalBtn.addEventListener('click', () => this.hideHelpModal());
+        this.dom.helpModal.addEventListener('click', (e) => {
+            if (e.target === this.dom.helpModal) {
+                this.hideHelpModal();
+            }
+        });
+
         this.dom.gaodeMapBtn.addEventListener('click', () => this.openMap('gaode'));
         this.dom.googleMapBtn.addEventListener('click', () => this.openMap('google'));
         this.dom.revealFileBtn.addEventListener('click', () => this.revealCurrentFilePath());
@@ -9461,7 +9475,7 @@ class TeslaCamViewer {
         const metadataKeys = [
             'metadata', 'metadataDetail', 'loadingMetadata', 'noMetadata', 'speed', 'gear', 'steering', 
             'accelerator', 'brake', 'blinker', 'autopilot', 'gps', 'heading', 'acceleration',
-            'revealFile', 'downloadFile', 'toggleTheme', 'toggleLanguage', 'exportMetadata'
+            'revealFile', 'downloadFile', 'toggleTheme', 'toggleLanguage', 'exportMetadata', 'help'
         ];
         metadataKeys.forEach(key => {
             document.querySelectorAll(`[data-i18n="${key}"]`).forEach(el => {
@@ -10424,6 +10438,18 @@ class TeslaCamViewer {
         setTimeout(() => {
             this.dom.mapModal.style.display = 'none';
             this.currentMapCoordinates = null;
+        }, 300);
+    }
+
+    showHelpModal() {
+        this.dom.helpModal.style.display = 'flex';
+        setTimeout(() => this.dom.helpModal.classList.add('show'), 10);
+    }
+
+    hideHelpModal() {
+        this.dom.helpModal.classList.remove('show');
+        setTimeout(() => {
+            this.dom.helpModal.style.display = 'none';
         }, 300);
     }
 

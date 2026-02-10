@@ -860,6 +860,39 @@ body.dark-theme #eventFilter {
     visibility: hidden !important;
 }
 
+/* Instruction Overlay */
+.instruction-overlay {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 5;
+    cursor: pointer;
+}
+
+.instruction-overlay img {
+    max-width: 420px;
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+    transition: opacity 0.2s;
+}
+
+.instruction-overlay.hidden,
+.player-area:not(.empty) .instruction-overlay {
+    display: none;
+}
+
+/* Help Modal */
+.help-modal-content {
+    padding: 12px;
+    max-width: 640px;
+}
+
+.help-modal-content img {
+    width: 100%;
+    border-radius: 8px;
+}
+
 .video-container {
     position: absolute;
     background-color: #111; /* Keep dark */

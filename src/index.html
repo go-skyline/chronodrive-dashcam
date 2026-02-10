@@ -94,6 +94,10 @@
                             <span class="btn-icon">中</span>
                             <span class="btn-text" data-i18n="toggleLanguage">語言</span>
                         </button>
+                        <button id="helpBtn" class="control-btn" title="操作指引">
+                            <span class="btn-icon"><i data-lucide="help-circle"></i></span>
+                            <span class="btn-text" data-i18n="help">說明</span>
+                        </button>
                     </div>
                     <button id="headerMenuBtn" class="header-menu-btn" title="更多選項">
                         <svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -126,6 +130,10 @@
                 <div id="right-pillar-container" class="video-container is-pip hidden" data-camera="right_pillar">
                     <video id="right-pillar-player"></video>
                     <div class="camera-label">右柱</div>
+                </div>
+
+                <div class="instruction-overlay" onclick="this.classList.add('hidden')" title="Click to dismiss">
+                    <img src="imgs/instruction_60.webp" alt="操作指引">
                 </div>
 
                 <div id="metadataPanel" class="metadata-panel collapsed">
@@ -506,6 +514,13 @@
         </div>
     </div>
 
+
+    <div id="helpModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content help-modal-content">
+            <img src="imgs/instruction_60.webp" alt="操作指引">
+            <button class="close-modal-btn" id="closeHelpModalBtn">&times;</button>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/zh.js"></script>
