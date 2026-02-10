@@ -10142,30 +10142,8 @@ class TeslaCamViewer {
 
         console.log('[startClipExport] Export options:', { addTimestamp, addMetadata, addLogo, addAudio, mergeGrid, useLocalFFmpeg, colorAdjust, cameras });
         
-        // WEB ONLY: Ask for save location upfront to enable streaming
+        // Always use memory mode (no upfront fileHandle) so blob is available for save/share
         let fileHandle = null;
-        if (!this.isTauri && 'showSaveFilePicker' in window && !useLocalFFmpeg) {
-             // Only support streaming for Grid (1 file) or Single Camera (1 file)
-             if (mergeGrid || cameras.length === 1) {
-                  try {
-                      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
-                      const camName = mergeGrid ? 'grid' : cameras[0];
-                      // Canvas export produces WebM
-                      const suggestedName = `TeslaCam_${camName}_${timestamp}.webm`;
-                      
-                      fileHandle = await window.showSaveFilePicker({
-                          suggestedName: suggestedName,
-                          types: [{
-                              description: 'WebM Video',
-                              accept: { 'video/webm': ['.webm'] }
-                          }],
-                      });
-                  } catch (e) {
-                      if (e.name === 'AbortError') return; // User cancelled
-                      console.error('File picker failed, falling back to memory mode:', e);
-                  }
-             }
-        }
 
         // Disable start button but KEEP cancel button enabled
         this.dom.startClipBtn.disabled = true;
