@@ -10405,16 +10405,18 @@ class TeslaCamViewer {
                         }
                         resultRow.appendChild(btn);
 
-                        // Share button
-                        const shareBtn = document.createElement('button');
-                        shareBtn.className = 'download-btn share-btn';
-                        shareBtn.innerHTML = `
-                            <span class="btn-icon"><i data-lucide="share-2"></i></span>
-                            <span class="btn-text">${translations.shareLink}</span>
-                        `;
-                        lucide.createIcons({ nodes: [shareBtn] });
-                        shareBtn.onclick = () => this.shareVideoToCloud(result.blob, shareBtn, translations);
-                        resultRow.appendChild(shareBtn);
+                        // Share button — only when blob has data (not in stream/fileHandle mode)
+                        if (result.blob && result.blob.size > 0) {
+                            const shareBtn = document.createElement('button');
+                            shareBtn.className = 'download-btn share-btn';
+                            shareBtn.innerHTML = `
+                                <span class="btn-icon"><i data-lucide="share-2"></i></span>
+                                <span class="btn-text">${translations.shareLink}</span>
+                            `;
+                            lucide.createIcons({ nodes: [shareBtn] });
+                            shareBtn.onclick = () => this.shareVideoToCloud(result.blob, shareBtn, translations);
+                            resultRow.appendChild(shareBtn);
+                        }
 
                         downloadButtons.appendChild(resultRow);
                     }
