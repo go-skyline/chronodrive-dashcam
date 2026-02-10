@@ -6820,8 +6820,8 @@ class VideoClipProcessor {
                             this.ctx.fillStyle = '#3B6EA5';
                             this.ctx.fillRect(offsetX, offsetY, item.drawW, item.drawH);
                             this.ctx.fillStyle = '#ffffff';
-                            this.ctx.font = 'bold 36px "Noto Sans SC", Arial';
-                            const noSignalText = 'No Signal';
+                            this.ctx.font = 'bold 36px "Noto Sans TC", Arial';
+                            const noSignalText = i18n[this.currentLanguage]?.noSignal || 'No Signal';
                             const tw = this.ctx.measureText(noSignalText).width;
                             this.ctx.fillText(noSignalText, offsetX + Math.floor((item.drawW - tw) / 2), offsetY + Math.floor(item.drawH / 2) + 12);
                         } else {
@@ -9427,7 +9427,8 @@ class TeslaCamViewer {
         if (!translations) return;
 
         document.title = translations.pageTitle;
-        
+        document.documentElement.style.setProperty('--no-signal-text', `'${translations.noSignal}'`);
+
         // Update language toggle button text
         const langIconEl = this.dom.langToggleBtn.querySelector('.btn-icon');
         if (langIconEl) {
@@ -10372,7 +10373,6 @@ class TeslaCamViewer {
                              if (result.blob && result.blob.size > 0) {
                                  btn.innerHTML += `<span class="btn-size">${sizeText}</span>`;
                              }
-                             lucide.createIcons({ nodes: [btn] });
                              this.dom.clipProgressText.textContent = translations.complete;
                         } else {
                             btn.innerHTML = `
@@ -10380,7 +10380,6 @@ class TeslaCamViewer {
                                 <span class="btn-text">${translations.saveVideo || '儲存'} ${cameraName}</span>
                                 <span class="btn-size">${sizeText}</span>
                             `;
-                            lucide.createIcons({ nodes: [btn] });
                             btn.onclick = async () => {
                                 await this.saveVideoFile(result.blob, filename);
                                 result.downloaded = true;
@@ -10403,13 +10402,14 @@ class TeslaCamViewer {
                                 <span class="btn-icon"><i data-lucide="share-2"></i></span>
                                 <span class="btn-text">${translations.shareLink}</span>
                             `;
-                            lucide.createIcons({ nodes: [shareBtn] });
                             shareBtn.onclick = () => this.shareVideoToCloud(result.blob, shareBtn, translations);
                             resultRow.appendChild(shareBtn);
                         }
 
                         downloadButtons.appendChild(resultRow);
                     }
+                    // Initialize all Lucide icons in download buttons at once after DOM insertion
+                    lucide.createIcons({ nodes: [downloadButtons] });
                 }
                 
                 // Hide both buttons since we have the X close button
@@ -10530,8 +10530,8 @@ function preloadFonts() {
     const style = document.createElement('style');
     style.textContent = `
         @font-face {
-            font-family: 'Noto Sans SC';
-            src: url('https://pub-007d01a7483d4a778c32807e257fedc8.r2.dev/fonts/NotoSansSC-Light.ttf') format('truetype');
+            font-family: 'Noto Sans TC';
+            src: url('https://pub-007d01a7483d4a778c32807e257fedc8.r2.dev/fonts/NotoSansTC-Light.ttf') format('truetype');
             font-weight: 300;
             font-style: normal;
             font-display: swap;
