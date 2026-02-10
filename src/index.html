@@ -8,8 +8,18 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="styles.css">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-    <script>window.ADS_ENABLED = false;</script>
-    <script>if(window.ADS_ENABLED){document.write('<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8494448987528606" crossorigin="anonymous"><\/script>')}</script>
+    <script>
+        window.ADS_ENABLED = false;
+        window.ADS_CONFIG = {
+            client: 'ca-pub-8494448987528606',
+            slots: {
+                sidebar:  '1577297083',
+                footer:   '5432559843',
+                modal:    '2811764469'
+            }
+        };
+    </script>
+    <script>if(window.ADS_ENABLED){document.write('<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client='+window.ADS_CONFIG.client+'" crossorigin="anonymous"><\/script>')}</script>
 </head>
 <body>
     <div class="container">
@@ -535,6 +545,8 @@
             return;
         }
 
+        var cfg = window.ADS_CONFIG;
+
         var adEl = document.getElementById('adSidebar');
         if (adEl && adEl.offsetWidth > 0) {
             var ins = document.createElement('ins');
@@ -542,12 +554,11 @@
             ins.style.display = 'block';
             ins.style.width = '160px';
             ins.style.height = '600px';
-            ins.setAttribute('data-ad-client', 'ca-pub-8494448987528606');
-            ins.setAttribute('data-ad-slot', '1577297083');
+            ins.setAttribute('data-ad-client', cfg.client);
+            ins.setAttribute('data-ad-slot', cfg.slots.sidebar);
             ins.setAttribute('data-ad-format', 'vertical');
             adEl.appendChild(ins);
             try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
-
         }
 
         // 第二個廣告：sidebar footer 下方
@@ -559,8 +570,8 @@
             ins2.style.width = '250px';
             ins2.style.height = '250px';
             ins2.style.maxWidth = '100%';
-            ins2.setAttribute('data-ad-client', 'ca-pub-8494448987528606');
-            ins2.setAttribute('data-ad-slot', '5432559843');
+            ins2.setAttribute('data-ad-client', cfg.client);
+            ins2.setAttribute('data-ad-slot', cfg.slots.footer);
             ins2.setAttribute('data-ad-format', 'rectangle');
             sidebarAdEl.appendChild(ins2);
             try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
@@ -573,8 +584,8 @@
             var ins3 = document.createElement('ins');
             ins3.className = 'adsbygoogle';
             ins3.style.display = 'block';
-            ins3.setAttribute('data-ad-client', 'ca-pub-8494448987528606');
-            ins3.setAttribute('data-ad-slot', '2811764469');
+            ins3.setAttribute('data-ad-client', cfg.client);
+            ins3.setAttribute('data-ad-slot', cfg.slots.modal);
             ins3.setAttribute('data-ad-format', 'auto');
             ins3.setAttribute('data-full-width-responsive', 'true');
             clipAdEl.appendChild(ins3);
