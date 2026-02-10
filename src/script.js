@@ -10051,55 +10051,40 @@ class TeslaCamViewer {
                 xhr.send(blob);
             });
 
-            // Step 3: Show success — public URL + copy button + expiry notice
+            // Step 3: Turn share button into a "copy link" button
+            await navigator.clipboard.writeText(publicUrl);
+            this.showToast(translations.linkCopied, 'success');
+
             shareBtn.disabled = false;
-            shareBtn.innerHTML = `
-                <span class="btn-icon"><i data-lucide="check-circle"></i></span>
-                <span class="btn-text">${translations.shareLink}</span>
-            `;
-            lucide.createIcons({ nodes: [shareBtn] });
+            const setCopyState = (copied) => {
+                shareBtn.innerHTML = copied
+                    ? `<span class="btn-icon"><i data-lucide="check"></i></span>
+                       <span class="btn-text">${translations.linkCopied}</span>`
+                    : `<span class="btn-icon"><i data-lucide="copy"></i></span>
+                       <span class="btn-text">${translations.copyLink}</span>`;
+                lucide.createIcons({ nodes: [shareBtn] });
+            };
+            setCopyState(true);
+            setTimeout(() => setCopyState(false), 2000);
 
-            // Create share result area below the button
-            const shareResult = document.createElement('div');
-            shareResult.className = 'share-result';
-            shareResult.innerHTML = `
-                <div class="share-url-row">
-                    <a href="${publicUrl}" target="_blank" rel="noopener" class="share-url">${publicUrl}</a>
-                    <button class="share-copy-btn" title="${translations.copyLink}">
-                        <i data-lucide="copy"></i>
-                    </button>
-                </div>
-                <div class="share-expiry">${translations.linkExpiry}</div>
-            `;
-            lucide.createIcons({ nodes: [shareResult] });
-
-            // Insert after the parent row
+            // Add expiry notice below the row
+            const expiry = document.createElement('div');
+            expiry.className = 'share-expiry';
+            expiry.textContent = translations.linkExpiry;
             const parentRow = shareBtn.closest('.download-result-row');
-            if (parentRow) {
-                parentRow.after(shareResult);
-            } else {
-                shareBtn.after(shareResult);
-            }
+            if (parentRow) parentRow.after(expiry);
 
-            // Copy button handler
-            const copyBtn = shareResult.querySelector('.share-copy-btn');
-            copyBtn.onclick = async () => {
+            // Subsequent clicks copy the link again
+            shareBtn.onclick = async () => {
                 try {
                     await navigator.clipboard.writeText(publicUrl);
-                    copyBtn.innerHTML = `<i data-lucide="check"></i>`;
-                    lucide.createIcons({ nodes: [copyBtn] });
                     this.showToast(translations.linkCopied, 'success');
-                    setTimeout(() => {
-                        copyBtn.innerHTML = `<i data-lucide="copy"></i>`;
-                        lucide.createIcons({ nodes: [copyBtn] });
-                    }, 2000);
+                    setCopyState(true);
+                    setTimeout(() => setCopyState(false), 2000);
                 } catch {
                     this.showToast('Copy failed', 'error');
                 }
             };
-
-            // Disable share button after success
-            shareBtn.disabled = true;
 
         } catch (err) {
             console.error('Share upload error:', err);
