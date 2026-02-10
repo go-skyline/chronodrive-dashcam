@@ -67,6 +67,15 @@
         selectClipRange: "Select clip range on progress bar first",
         selectAtLeastOneCamera: "Please select at least one camera",
         exportFailed: "Export failed: ",
+        shareLink: "Share Link",
+        uploadingVideo: "Uploading video...",
+        copyLink: "Copy Link",
+        linkCopied: "Copied!",
+        linkExpiry: "This link expires in 24 hours",
+        uploadFailed: "Upload failed",
+        fileTooLarge: "File exceeds 100MB limit",
+        saveVideo: "Save",
+        videoReady: "Video ready — save or share below",
         metadata: "Drive Data",
         driveStats: "Drive Stats",
         loadingMetadata: "Loading...",
@@ -182,6 +191,15 @@
         selectClipRange: "請先在進度條上選擇剪輯範圍",
         selectAtLeastOneCamera: "請至少選擇一個攝影機",
         exportFailed: "匯出失敗：",
+        shareLink: "分享連結",
+        uploadingVideo: "正在上傳影片...",
+        copyLink: "複製連結",
+        linkCopied: "已複製！",
+        linkExpiry: "此連結將在 24 小時後失效",
+        uploadFailed: "上傳失敗",
+        fileTooLarge: "檔案超過 100MB 限制",
+        saveVideo: "儲存",
+        videoReady: "影片已產生，請儲存或分享",
         metadata: "行車數據",
         driveStats: "行車數據",
         loadingMetadata: "載入中...",
@@ -9965,9 +9983,128 @@ class TeslaCamViewer {
         }
     }
 
+    async shareVideoToCloud(blob, shareBtn, translations) {
+        const maxSize = 100 * 1024 * 1024;
+        if (blob.size > maxSize) {
+            this.showToast(translations.fileTooLarge, 'error');
+            return;
+        }
+
+        // Disable button and show uploading state
+        shareBtn.disabled = true;
+        const originalHTML = shareBtn.innerHTML;
+        shareBtn.innerHTML = `
+            <span class="btn-icon"><i data-lucide="loader"></i></span>
+            <span class="btn-text">${translations.uploadingVideo} 0%</span>
+        `;
+        lucide.createIcons({ nodes: [shareBtn] });
+
+        try {
+            // Step 1: Request upload slot
+            const res = await fetch('/api/share', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contentType: 'video/webm',
+                    size: blob.size,
+                }),
+            });
+
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err.error === 'fileTooLarge' ? translations.fileTooLarge : (err.error || 'Request failed'));
+            }
+
+            const { uploadUrl, publicUrl, expiresAt } = await res.json();
+
+            // Step 2: Upload blob with progress tracking via XHR
+            await new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('PUT', uploadUrl, true);
+                xhr.setRequestHeader('Content-Type', 'video/webm');
+
+                xhr.upload.onprogress = (e) => {
+                    if (e.lengthComputable) {
+                        const pct = Math.round((e.loaded / e.total) * 100);
+                        const textEl = shareBtn.querySelector('.btn-text');
+                        if (textEl) textEl.textContent = `${translations.uploadingVideo} ${pct}%`;
+                    }
+                };
+
+                xhr.onload = () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        resolve();
+                    } else {
+                        reject(new Error(`Upload failed: ${xhr.status}`));
+                    }
+                };
+                xhr.onerror = () => reject(new Error('Network error'));
+                xhr.send(blob);
+            });
+
+            // Step 3: Show success — public URL + copy button + expiry notice
+            shareBtn.disabled = false;
+            shareBtn.innerHTML = `
+                <span class="btn-icon"><i data-lucide="check-circle"></i></span>
+                <span class="btn-text">${translations.shareLink}</span>
+            `;
+            lucide.createIcons({ nodes: [shareBtn] });
+
+            // Create share result area below the button
+            const shareResult = document.createElement('div');
+            shareResult.className = 'share-result';
+            shareResult.innerHTML = `
+                <div class="share-url-row">
+                    <a href="${publicUrl}" target="_blank" rel="noopener" class="share-url">${publicUrl}</a>
+                    <button class="share-copy-btn" title="${translations.copyLink}">
+                        <i data-lucide="copy"></i>
+                    </button>
+                </div>
+                <div class="share-expiry">${translations.linkExpiry}</div>
+            `;
+            lucide.createIcons({ nodes: [shareResult] });
+
+            // Insert after the parent row
+            const parentRow = shareBtn.closest('.download-result-row');
+            if (parentRow) {
+                parentRow.after(shareResult);
+            } else {
+                shareBtn.after(shareResult);
+            }
+
+            // Copy button handler
+            const copyBtn = shareResult.querySelector('.share-copy-btn');
+            copyBtn.onclick = async () => {
+                try {
+                    await navigator.clipboard.writeText(publicUrl);
+                    copyBtn.innerHTML = `<i data-lucide="check"></i>`;
+                    lucide.createIcons({ nodes: [copyBtn] });
+                    this.showToast(translations.linkCopied, 'success');
+                    setTimeout(() => {
+                        copyBtn.innerHTML = `<i data-lucide="copy"></i>`;
+                        lucide.createIcons({ nodes: [copyBtn] });
+                    }, 2000);
+                } catch {
+                    this.showToast('Copy failed', 'error');
+                }
+            };
+
+            // Disable share button after success
+            shareBtn.disabled = true;
+
+        } catch (err) {
+            console.error('Share upload error:', err);
+            this.showToast(`${translations.uploadFailed}: ${err.message}`, 'error');
+            // Restore button
+            shareBtn.disabled = false;
+            shareBtn.innerHTML = originalHTML;
+            lucide.createIcons({ nodes: [shareBtn] });
+        }
+    }
+
     async startClipExport() {
         const translations = i18n[this.currentLanguage];
-        
+
         // Get selected cameras
         const cameras = [];
         if (this.dom.exportFront.checked) cameras.push('front');
@@ -10198,18 +10335,18 @@ class TeslaCamViewer {
                 }, 2000);
             } else {
                 // Browser download - Show buttons
-                this.dom.clipProgressText.textContent = '影片已產生，請點擊下方按鈕儲存';
-                
+                this.dom.clipProgressText.textContent = translations.videoReady || '影片已產生，請儲存或分享';
+
                 // Disable clip info and options since video is already generated
                 this.dom.clipInfo.classList.add('disabled');
                 this.dom.clipOptions.classList.add('disabled');
-                
+
                 // Store results for cleanup when modal closes
                 this.pendingExportBlobs = results;
-                
+
                 if (downloadButtons) {
                     downloadButtons.style.display = 'flex';
-                    
+
                     for (const result of results) {
                         const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
                         const filename = `TeslaCam_${result.camera}_${timestamp}.webm`;
@@ -10218,10 +10355,15 @@ class TeslaCamViewer {
                         const cameraName = isGrid ? (translations.mergeVideos || '四宮格') : (cameraNameMap[result.camera] || result.camera);
                         const sizeInMB = result.blob.size / (1024 * 1024);
                         const sizeText = sizeInMB >= 1 ? `${sizeInMB.toFixed(1)} MB` : `${(result.blob.size / 1024).toFixed(0)} KB`;
-                        
+
+                        // Container for each result's buttons
+                        const resultRow = document.createElement('div');
+                        resultRow.className = 'download-result-row';
+
+                        // Save button
                         const btn = document.createElement('button');
                         btn.className = `download-btn${isGrid ? ' grid-btn' : ''}`;
-                        
+
                         if (result.saved) {
                              btn.disabled = true;
                              btn.innerHTML = `
@@ -10236,13 +10378,12 @@ class TeslaCamViewer {
                         } else {
                             btn.innerHTML = `
                                 <span class="btn-icon"><i data-lucide="save"></i></span>
-                                <span class="btn-text">儲存 ${cameraName} 影片</span>
+                                <span class="btn-text">${translations.saveVideo || '儲存'} ${cameraName}</span>
                                 <span class="btn-size">${sizeText}</span>
                             `;
                             lucide.createIcons({ nodes: [btn] });
                             btn.onclick = async () => {
                                 await this.saveVideoFile(result.blob, filename);
-                                // Mark as downloaded
                                 result.downloaded = true;
                                 btn.disabled = true;
                                 btn.innerHTML = `
@@ -10253,7 +10394,20 @@ class TeslaCamViewer {
                                 lucide.createIcons({ nodes: [btn] });
                             };
                         }
-                        downloadButtons.appendChild(btn);
+                        resultRow.appendChild(btn);
+
+                        // Share button
+                        const shareBtn = document.createElement('button');
+                        shareBtn.className = 'download-btn share-btn';
+                        shareBtn.innerHTML = `
+                            <span class="btn-icon"><i data-lucide="share-2"></i></span>
+                            <span class="btn-text">${translations.shareLink}</span>
+                        `;
+                        lucide.createIcons({ nodes: [shareBtn] });
+                        shareBtn.onclick = () => this.shareVideoToCloud(result.blob, shareBtn, translations);
+                        resultRow.appendChild(shareBtn);
+
+                        downloadButtons.appendChild(resultRow);
                     }
                 }
                 

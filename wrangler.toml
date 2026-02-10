@@ -1,0 +1,9 @@
+name = "chronodrive-dashcam"
+compatibility_date = "2024-09-23"
+
+[vars]
+SHARE_PUBLIC_DOMAIN = "chronodrive-r2.tinyomnibus.me"
+
+[[r2_buckets]]
+binding = "SHARES_BUCKET"
+bucket_name = "chronodrive-shares"
