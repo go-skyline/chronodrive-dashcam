@@ -4092,22 +4092,35 @@ class VideoClipProcessor {
             console.log('[FFmpeg] Dynamically loading FFmpeg WASM library...');
             
             try {
-                // Try ESM import first - much better for cross-origin and avoids UMD chunk issues
-                // Use version 0.12.6 to match core
-                const module = await import('https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.6/+esm');
+                // Fetch ESM bundle as Blob URL to avoid CORS Worker restrictions
+                const esmUrl = 'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.6/+esm';
+                const blobUrl = await this.toBlobURLWithCache(esmUrl, 'text/javascript', progressCallback);
+                const module = await import(blobUrl);
                 FFmpegLib = module;
-                console.log('[FFmpeg] FFmpeg library loaded via ESM');
+                console.log('[FFmpeg] FFmpeg library loaded via Blob URL (ESM)');
             } catch (esmError) {
-                console.warn('[FFmpeg] ESM import failed, falling back to UMD script tag:', esmError);
+                console.warn('[FFmpeg] Blob ESM import failed, falling back to UMD script tag:', esmError);
                 // Fallback to the UMD script tag if ESM fails
-                await new Promise((resolve, reject) => {
-                    const script = document.createElement('script');
-                    // Use 0.12.6 for better compatibility with core 0.12.6
-                    script.src = 'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.6/dist/umd/ffmpeg.min.js';
-                    script.onload = resolve;
-                    script.onerror = () => reject(new Error('Failed to load FFmpeg library via script tag'));
-                    document.head.appendChild(script);
-                });
+                try {
+                    const umdUrl = 'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.6/dist/umd/ffmpeg.min.js';
+                    const blobUrl = await this.toBlobURLWithCache(umdUrl, 'text/javascript', progressCallback);
+                    await new Promise((resolve, reject) => {
+                        const script = document.createElement('script');
+                        script.src = blobUrl;
+                        script.onload = resolve;
+                        script.onerror = () => reject(new Error('Failed to load FFmpeg library'));
+                        document.head.appendChild(script);
+                    });
+                } catch {
+                    // Last resort: direct script tag
+                    await new Promise((resolve, reject) => {
+                        const script = document.createElement('script');
+                        script.src = 'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.6/dist/umd/ffmpeg.min.js';
+                        script.onload = resolve;
+                        script.onerror = () => reject(new Error('Failed to load FFmpeg library'));
+                        document.head.appendChild(script);
+                    });
+                }
                 FFmpegLib = window.FFmpegWASM || window.FFmpeg;
             }
 
