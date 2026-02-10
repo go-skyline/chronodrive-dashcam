@@ -1705,12 +1705,14 @@ body.sidebar-collapsed .open-sidebar-btn {
 
 .download-result-row .share-btn {
     flex: 0 0 auto;
-    background: #3a7ca5;
+    background: #f0c040;
+    color: #1a1a2e;
     padding: 10px 14px;
 }
 
 .download-result-row .share-btn:hover {
-    background: #4a8cb5;
+    background: #f5d060;
+    box-shadow: 0 4px 12px rgba(240, 192, 64, 0.4);
 }
 
 /* Share result area */

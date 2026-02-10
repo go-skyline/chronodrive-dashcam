@@ -9984,9 +9984,10 @@ class TeslaCamViewer {
     }
 
     async shareVideoToCloud(blob, shareBtn, translations) {
+        console.log('[Share] blob.size =', blob.size, '(' + (blob.size / 1024 / 1024).toFixed(2) + ' MB)');
         const maxSize = 100 * 1024 * 1024;
-        if (blob.size > maxSize) {
-            this.showToast(translations.fileTooLarge, 'error');
+        if (!blob.size || blob.size > maxSize) {
+            this.showToast(translations.fileTooLarge + ` (${(blob.size / 1024 / 1024).toFixed(1)} MB)`, 'error');
             return;
         }
 
@@ -10011,8 +10012,16 @@ class TeslaCamViewer {
             });
 
             if (!res.ok) {
-                const err = await res.json().catch(() => ({}));
-                throw new Error(err.error === 'fileTooLarge' ? translations.fileTooLarge : (err.error || 'Request failed'));
+                const errText = await res.text();
+                console.error('[Share] API error:', res.status, errText);
+                let errMsg;
+                try {
+                    const errObj = JSON.parse(errText);
+                    errMsg = errObj.error === 'fileTooLarge' ? translations.fileTooLarge : (errObj.error || `HTTP ${res.status}`);
+                } catch {
+                    errMsg = `HTTP ${res.status}`;
+                }
+                throw new Error(errMsg);
             }
 
             const { uploadUrl, publicUrl, expiresAt } = await res.json();
