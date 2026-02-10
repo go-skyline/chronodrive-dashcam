@@ -156,6 +156,12 @@ body.dark-theme .ad-sidebar {
 @media (max-width: 1024px) {
     .ad-sidebar { display: none; }
 }
+/* Hide all ad containers when ads are disabled */
+body.ads-disabled .ad-sidebar,
+body.ads-disabled .sidebar-ad-container,
+body.ads-disabled .clip-modal-ad {
+    display: none !important;
+}
 
 /* Main Content */
 .main-content {

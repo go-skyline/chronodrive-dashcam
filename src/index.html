@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="styles.css">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8494448987528606" crossorigin="anonymous"></script>
+    <script>window.ADS_ENABLED = false;</script>
+    <script>if(window.ADS_ENABLED){document.write('<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8494448987528606" crossorigin="anonymous"><\/script>')}</script>
 </head>
 <body>
     <div class="container">
@@ -529,6 +530,11 @@
     <script src="script.js"></script>
     <script>
     (function() {
+        if (!window.ADS_ENABLED) {
+            document.body.classList.add('ads-disabled');
+            return;
+        }
+
         var adEl = document.getElementById('adSidebar');
         if (adEl && adEl.offsetWidth > 0) {
             var ins = document.createElement('ins');
