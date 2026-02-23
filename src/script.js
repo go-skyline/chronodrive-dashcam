@@ -4549,9 +4549,9 @@ class VideoClipProcessor {
                 // Encoding settings
                 // Use MPEG-TS for intermediate segments
                 args.push('-c:v', 'libx264', '-preset', 'ultrafast');
-                // Cap bitrate to control file size and memory usage (4Mbps is sufficient for dashboard)
-                args.push('-b:v', '4000k', '-maxrate', '4000k', '-bufsize', '8000k');
-                args.push('-crf', '28'); // Slightly better quality than 32, but bitrate cap will control size
+                // Higher quality encoding settings
+                args.push('-b:v', '8000k', '-maxrate', '8000k', '-bufsize', '16000k');
+                args.push('-crf', '23'); // Default x264 quality level
                 args.push('-g', '48', '-bf', '0', '-pix_fmt', 'yuv420p');
                 args.push('-f', 'mpegts'); // Output as TS
                 
@@ -5964,7 +5964,7 @@ class VideoClipProcessor {
         
         this.mediaRecorder = new MediaRecorder(stream, {
             mimeType,
-            videoBitsPerSecond: 3000000 // Reduced to 3 Mbps for lower memory footprint
+            videoBitsPerSecond: 8000000 // 8 Mbps for higher quality output
         });
         
         // Use streaming approach - write chunks to array and periodically clear
@@ -6491,9 +6491,9 @@ class VideoClipProcessor {
         }
         
         // Dynamic bitrate based on grid cell count
-        // Optimize bitrate to reduce memory usage: ~2.5Mbps per camera is sufficient
+        // 4 Mbps per camera for higher quality output
         const gridCellCount = gridCols * gridRows;
-        const videoBitsPerSecond = Math.min(2500000 * gridCellCount, 15000000);
+        const videoBitsPerSecond = Math.min(4000000 * gridCellCount, 20000000);
         
         let mimeType = 'video/webm;codecs=vp9';
         if (!MediaRecorder.isTypeSupported(mimeType)) {
