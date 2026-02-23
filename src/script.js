@@ -4549,9 +4549,8 @@ class VideoClipProcessor {
                 // Encoding settings
                 // Use MPEG-TS for intermediate segments
                 args.push('-c:v', 'libx264', '-preset', 'ultrafast');
-                // Higher quality encoding settings
-                args.push('-b:v', '8000k', '-maxrate', '8000k', '-bufsize', '16000k');
-                args.push('-crf', '23'); // Default x264 quality level
+                args.push('-b:v', '5000k', '-maxrate', '5000k', '-bufsize', '10000k');
+                args.push('-crf', '23');
                 args.push('-g', '48', '-bf', '0', '-pix_fmt', 'yuv420p');
                 args.push('-f', 'mpegts'); // Output as TS
                 
@@ -5964,7 +5963,7 @@ class VideoClipProcessor {
         
         this.mediaRecorder = new MediaRecorder(stream, {
             mimeType,
-            videoBitsPerSecond: 8000000 // 8 Mbps for higher quality output
+            videoBitsPerSecond: 5000000 // 5 Mbps
         });
         
         // Use streaming approach - write chunks to array and periodically clear
@@ -6491,9 +6490,9 @@ class VideoClipProcessor {
         }
         
         // Dynamic bitrate based on grid cell count
-        // 4 Mbps per camera for higher quality output
+        // 3 Mbps per camera
         const gridCellCount = gridCols * gridRows;
-        const videoBitsPerSecond = Math.min(4000000 * gridCellCount, 20000000);
+        const videoBitsPerSecond = Math.min(3000000 * gridCellCount, 15000000);
         
         let mimeType = 'video/webm;codecs=vp9';
         if (!MediaRecorder.isTypeSupported(mimeType)) {
